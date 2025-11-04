@@ -1,6 +1,7 @@
 package com.ditto.example.spring.quickstart.controller;
 
-import com.ditto.example.spring.quickstart.service.DittoTaskService;
+import com.ditto.example.spring.quickstart.service.DittoPostService;
+import com.ditto.example.spring.quickstart.service.Post;
 import com.ditto.example.spring.quickstart.service.Task;
 import jakarta.annotation.Nonnull;
 import org.springframework.http.MediaType;
@@ -16,11 +17,11 @@ import java.util.Set;
 @RestController
 public class TaskRestController {
     @Nonnull
-    private final DittoTaskService taskService;
+    private final DittoPostService taskService;
     @Nonnull
     private final SpringTemplateEngine templateEngine;
 
-    public TaskRestController(final DittoTaskService taskService, final SpringTemplateEngine templateEngine) {
+    public TaskRestController(final DittoPostService taskService, final SpringTemplateEngine templateEngine) {
         this.taskService = taskService;
         this.templateEngine = templateEngine;
     }
@@ -37,7 +38,7 @@ public class TaskRestController {
 
     @PostMapping("/tasks")
     public String addTask(@RequestParam("title") @Nonnull String title) {
-        taskService.addTask(title);
+        taskService.addPost(title);
         return "";
     }
 
@@ -61,7 +62,7 @@ public class TaskRestController {
 
 
     @Nonnull
-    private String renderTodoList(@Nonnull List<Task> tasks) {
+    private String renderTodoList(@Nonnull List<Post> tasks) {
         Context context = new Context();
         context.setVariable("tasks", tasks);
         return templateEngine.process("fragments/taskList", Set.of("taskListFrag"), context);

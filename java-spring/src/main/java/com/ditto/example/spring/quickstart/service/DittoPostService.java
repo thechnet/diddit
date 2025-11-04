@@ -13,27 +13,36 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class DittoTaskService {
+public class DittoPostService {
     private static final String TASKS_COLLECTION_NAME = "tasks";
 
     private final DittoService dittoService;
 
-    public DittoTaskService(DittoService dittoService) {
+    public DittoPostService(DittoService dittoService) {
         this.dittoService = dittoService;
     }
 
-    public void addTask(@Nonnull String title) {
+    public void addPost(@Nonnull String text) {
         try {
             dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newTask)".formatted(TASKS_COLLECTION_NAME),
+                    "INSERT INTO %s DOCUMENTS (:newPost)".formatted(TASKS_COLLECTION_NAME),
                     DittoCborSerializable.Dictionary.buildDictionary()
                             .put(
-                                    "newTask",
+                                    "newPost",
                                     DittoCborSerializable.Dictionary.buildDictionary()
                                             .put("_id", UUID.randomUUID().toString())
-                                            .put("title", title)
+                                            .put("title", "")
                                             .put("done", false)
                                             .put("deleted", false)
+		                                    .put("id", UUID.randomUUID().toString())
+		                                    .put("parent", "")
+		                                    .put("author_id", "Marvin")
+		                                    .put("time", 0)
+		                                    .put("text", text)
+		                                    .put("attachment", "fixme")
+		                                    .put("likes", 0)
+		                                    .put("dislikes", 0)
+		                                    .put("tags", "")
                                             .build()
                             )
                             .build()
@@ -95,15 +104,15 @@ public class DittoTaskService {
     }
 
     @Nonnull
-    public Flux<List<Task>> observeAll() {
-        final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY title ASC".formatted(TASKS_COLLECTION_NAME);
+    public Flux<List<Post>> observeAll() {
+        final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY text ASC".formatted(TASKS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
             try {
                 DittoSyncSubscription subscription = ditto.getSync().registerSubscription(selectQuery);
                 DittoStoreObserver observer = ditto.getStore().registerObserver(selectQuery, results -> {
-                    emitter.next(results.getItems().stream().map(this::itemToTask).toList());
+                    emitter.next(results.getItems().stream().map(this::itemToPost).toList());
                 });
 
                 emitter.onDispose(() -> {
@@ -125,13 +134,18 @@ public class DittoTaskService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 
-    private Task itemToTask(@Nonnull DittoQueryResultItem item) {
+    private Post itemToPost(@Nonnull DittoQueryResultItem item) {
         DittoCborSerializable.Dictionary value = item.getValue();
-        return new Task(
-                value.get("_id").getString(),
-                value.get("title").getString(),
-                value.get("done").getBoolean(),
-                value.get("deleted").getBoolean()
+        return new Post(
+	        value.get("id").getString(),
+	        value.get("parent").getString(),
+	        value.get("author_id").getString(),
+	        value.get("time").getInt(),
+	        value.get("text").getString(),
+	        value.get("attachment").getString(),
+	        value.get("likes").getInt(),
+	        value.get("dislikes").getInt(),
+	        value.get("tags").getString()
         );
     }
 }
