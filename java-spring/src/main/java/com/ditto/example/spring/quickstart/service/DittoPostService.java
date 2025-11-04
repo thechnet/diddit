@@ -105,7 +105,7 @@ public class DittoPostService {
 
     @Nonnull
     public Flux<List<Post>> observeAll() {
-        final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY text ASC".formatted(TASKS_COLLECTION_NAME);
+        final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
