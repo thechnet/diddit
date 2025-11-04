@@ -37,8 +37,8 @@ public class TaskRestController {
     }
 
     @PostMapping("/tasks")
-    public String addTask(@RequestParam("title") @Nonnull String title, @RequestParam("author_id") @Nonnull String author_id) {
-        taskService.addPost(title, author_id);
+    public String addTask(@RequestParam("title") @Nonnull String title, @RequestParam("author_id") @Nonnull String author_id, @RequestParam("id") @Nonnull String id) {
+        taskService.addPost(title, author_id, id);
         return "";
     }
 

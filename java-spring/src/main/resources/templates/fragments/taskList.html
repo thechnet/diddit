@@ -7,6 +7,7 @@
 
             <span th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
             <!--<span th:text="${#dates.format(item.time * 1000, 'dd.MM.yyyy HH:mm')}"></span> -->
+            <b th:text="${item.id}"></b>
         </div>
 
         <div th:text="${item.text}"></div>

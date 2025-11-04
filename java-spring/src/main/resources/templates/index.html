@@ -22,9 +22,14 @@
         <h3>Add new Post</h3>
         <form hx-post="/tasks" hx-swap="none"
               hx-on::after-request="if(event.detail.successful) this.reset()">
-            <input type="text" name="author_id" placeholder="Author" required />
-            <input type="text" name="title" placeholder="New Post" required />
-            <button type="submit">Add</button>
+            <input type="text" name="author_id" placeholder="Author" required
+                   style="width: 100%; padding: 6px; box-sizing: border-box;" />
+
+            <!-- Text input bigger (multiline) -->
+            <textarea name="title" placeholder="New Post" required
+                      style="width: 100%; height: 100px; padding: 6px; box-sizing: border-box;"></textarea>
+
+            <button type="submit" style="padding: 6px;">Add</button>
         </form>
     </div>
 
