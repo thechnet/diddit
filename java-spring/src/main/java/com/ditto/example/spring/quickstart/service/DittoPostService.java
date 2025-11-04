@@ -22,7 +22,7 @@ public class DittoPostService {
         this.dittoService = dittoService;
     }
 
-    public void addPost(@Nonnull String text, @Nonnull String author_id, @Nonnull String id) {
+    public void addPost(@Nonnull String text, @Nonnull String author_id) {
         try {
             dittoService.getDitto().getStore().execute(
                     "INSERT INTO %s DOCUMENTS (:newPost)".formatted(TASKS_COLLECTION_NAME),
