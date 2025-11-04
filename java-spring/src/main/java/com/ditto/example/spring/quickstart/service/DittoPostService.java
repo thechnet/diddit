@@ -37,7 +37,7 @@ public class DittoPostService {
 		                                    .put("id", UUID.randomUUID().toString())
 		                                    .put("parent", "")
 		                                    .put("author_id", "Marvin")
-		                                    .put("time", 0)
+		                                    .put("time", (int) (System.currentTimeMillis() / 1000))
 		                                    .put("text", text)
 		                                    .put("attachment", "fixme")
 		                                    .put("likes", 0)

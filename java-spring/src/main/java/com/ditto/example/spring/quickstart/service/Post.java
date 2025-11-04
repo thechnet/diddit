@@ -6,7 +6,7 @@ public record Post(
         String id,
         String parent,
         String author_id,
-        int time,
+        long time,
         String text,
         String attachment,
         int likes,
