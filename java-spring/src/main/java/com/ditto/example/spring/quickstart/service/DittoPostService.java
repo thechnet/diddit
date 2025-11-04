@@ -38,7 +38,7 @@ public class DittoPostService {
 		                                    .put("parent", "")
 		                                    .put("author_id", "Marvin")
 		                                    .put("time", 0)
-		                                    .put("text", "text")
+		                                    .put("text", text)
 		                                    .put("attachment", "fixme")
 		                                    .put("likes", 0)
 		                                    .put("dislikes", 0)
