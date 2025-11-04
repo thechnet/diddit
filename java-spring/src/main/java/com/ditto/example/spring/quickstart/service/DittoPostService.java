@@ -22,7 +22,7 @@ public class DittoPostService {
         this.dittoService = dittoService;
     }
 
-    public void addPost(@Nonnull String text) {
+    public void addPost(@Nonnull String text, @Nonnull String author_id) {
         try {
             dittoService.getDitto().getStore().execute(
                     "INSERT INTO %s DOCUMENTS (:newPost)".formatted(TASKS_COLLECTION_NAME),
@@ -36,7 +36,7 @@ public class DittoPostService {
                                             .put("deleted", false)
 		                                    .put("id", UUID.randomUUID().toString())
 		                                    .put("parent", "")
-		                                    .put("author_id", "Marvin")
+		                                    .put("author_id", author_id)
 		                                    .put("time", (int) (System.currentTimeMillis() / 1000))
 		                                    .put("text", text)
 		                                    .put("attachment", "fixme")

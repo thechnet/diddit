@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
 <head>
     <title>Ditto Spring Tasks Quickstart</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
@@ -18,6 +18,16 @@
         </button>
     </div>
 
+    <div id="form-section" style="flex: 1;">
+        <h3>Add new Post</h3>
+        <form hx-post="/tasks" hx-swap="none"
+              hx-on::after-request="if(event.detail.successful) this.reset()">
+            <input type="text" name="author_id" placeholder="Author" required />
+            <input type="text" name="title" placeholder="New Post" required />
+            <button type="submit">Add</button>
+        </form>
+    </div>
+
     <div style="display: flex; gap: 2rem;">
         <div id="list-section" style="flex: 1;"
              hx-ext="sse"
@@ -26,14 +36,7 @@
             <div th:replace="fragments/taskList :: taskListFrag(${tasks})"></div>
         </div>
 
-       <div id="form-section" style="flex: 1;">
-            <h3>Add new Task</h3>
-            <form hx-post="/tasks" hx-swap="none"
-                  hx-on::after-request="if(event.detail.successful) this.reset()">
-                <input type="text" name="title" placeholder="Task description..." required />
-                <button type="submit">Add</button>
-            </form>
-        </div>
+
     </div>
     <script>
         document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
