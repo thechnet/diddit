@@ -6,10 +6,10 @@
             <span th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
         </div>
 
-        <div th:text="${item.text}"></div>
+        <div th:text="${item.text}"></div> <small> Comment Id:<span th:text="${item.id}"></span></small>
 
         <div th:if="${item.parent != null && item.parent != ''}">
-            <small>Reply to: <span th:text="${item.parent}"></span></small>
+            <small>Replied to: <span th:text="${item.parent}"></span></small>
         </div>
 
         <button th:attr="
