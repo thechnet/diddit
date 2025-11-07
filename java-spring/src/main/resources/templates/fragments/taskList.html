@@ -1,23 +1,27 @@
 <ul id="task_list" th:fragment="taskListFrag (tasks)">
-
     <h2>Posts</h2>
     <li th:each="item : ${tasks}">
         <div>
             <b th:text="${item.author_id}"></b>
-
             <span th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
-            <!--<span th:text="${#dates.format(item.time * 1000, 'dd.MM.yyyy HH:mm')}"></span> -->
-            <b th:text="${item.id}"></b>
         </div>
 
         <div th:text="${item.text}"></div>
 
         <div th:if="${item.parent != null && item.parent != ''}">
-            ↳ replying to post <span th:text="${item.parent}"></span>
+            <small>Reply to: <span th:text="${item.parent}"></span></small>
         </div>
 
-        <button type="submit">Reply</button>
+        <button th:attr="
+            hx-get='/tasks/replyForm',
+            hx-vals='{&quot;id&quot;:&quot;' + ${item.id} + '&quot;}',
+            hx-target='#reply_form_' + ${item.id},
+            hx-swap='innerHTML'"
+                style="background-color: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
+            Reply
+        </button>
 
-    
+        <div th:id="'reply_form_' + ${item.id}"></div>
+        <ul th:id="'replies_' + ${item.id}"></ul>
     </li>
 </ul>

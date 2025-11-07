@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 public class TaskRestController {
@@ -48,6 +50,26 @@ public class TaskRestController {
         return "";
     }
 
+    @PostMapping("/tasks/reply")
+    public String postReply(@RequestParam String id,
+                            @RequestParam String author_id,
+                            @RequestParam String text,
+                            Model model) {
+        taskService.replyPost(id, author_id, text);
+        Post reply = new Post(
+                UUID.randomUUID().toString(),
+                id,
+                author_id,
+                (int) (System.currentTimeMillis() / 1000),
+                text,
+                "",
+                0,
+                0,
+                ""
+        );
+        model.addAttribute("reply", reply);
+        return "";
+    }
     @DeleteMapping("/tasks/{taskId}")
     public String deleteTask(@PathVariable @Nonnull String taskId) {
         taskService.deleteTask(taskId);

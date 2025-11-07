@@ -103,6 +103,36 @@ public class DittoPostService {
         }
     }
 
+    public void replyPost(@Nonnull String parentId, @Nonnull String authorId, @Nonnull String text) {
+        try {
+            dittoService.getDitto().getStore().execute(
+                    "INSERT INTO %s DOCUMENTS (:reply)".formatted(TASKS_COLLECTION_NAME),
+                    DittoCborSerializable.Dictionary.buildDictionary()
+                            .put(
+                                    "reply",
+                                    DittoCborSerializable.Dictionary.buildDictionary()
+                                    .put("_id", UUID.randomUUID().toString())
+                                    .put("title", "")
+                                    .put("done", false)
+                                    .put("deleted", false)
+                                    .put("id", UUID.randomUUID().toString())
+                                    .put("parent", parentId)
+                                    .put("author_id", authorId)
+                                    .put("time", (int) (System.currentTimeMillis() / 1000))
+                                    .put("text", text)
+                                    .put("attachment", "")
+                                    .put("likes", 0)
+                                    .put("dislikes", 0)
+                                    .put("tags", "")
+                                    .build()
+                                )
+                                    .build()
+            ).toCompletableFuture().join();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Nonnull
     public Flux<List<Post>> observeAll() {
         final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);

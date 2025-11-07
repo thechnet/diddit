@@ -44,10 +44,56 @@
 
     </div>
     <script>
-        document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
-            // Debug SSE Events
-            console.log(e)
-        })
+        function loadReplyForm(postId) {
+            console.log('Loading reply form for:', postId);
+
+            fetch('/tasks/replyForm?id=' + postId)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('reply_form_' + postId).innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Event delegation for dynamically loaded content
+        document.addEventListener('click', function(event) {
+            if (event.target.matches('[data-reply-button]')) {
+                const postId = event.target.getAttribute('data-post-id');
+                loadReplyForm(postId);
+            }
+        });
+        function loadReplyForm(postId) {
+            console.log('Reply button clicked for post:', postId);
+
+            const targetElement = document.getElementById('reply_form_' + postId);
+            console.log('Target element:', targetElement);
+
+            if (!targetElement) {
+                console.error('Target element not found: reply_form_' + postId);
+                return;
+            }
+
+            console.log('Making request to /tasks/replyForm?id=' + postId);
+
+            fetch('/tasks/replyForm?id=' + postId)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    console.log('Received HTML response');
+                    targetElement.innerHTML = html;
+                    console.log('Form inserted successfully');
+                })
+                .catch(error => {
+                    console.error('Error loading reply form:', error);
+                });
+        }
     </script>
 </body>
 </html>
