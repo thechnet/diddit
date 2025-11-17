@@ -51,15 +51,15 @@ public class TaskRestController {
     }
 
     @PostMapping("/tasks/reply")
-    public String postReply(@RequestParam String id,
-                            @RequestParam String author_id,
-                            @RequestParam String text,
+    public String postReply(@RequestParam("parentId") String parentId,
+                            @RequestParam("author_id") String authorId,
+                            @RequestParam("text") String text,
                             Model model) {
-        taskService.replyPost(id, author_id, text);
+        taskService.replyPost(parentId, authorId, text);
         Post reply = new Post(
                 UUID.randomUUID().toString(),
-                id,
-                author_id,
+                parentId,
+                authorId,
                 (int) (System.currentTimeMillis() / 1000),
                 text,
                 "",
