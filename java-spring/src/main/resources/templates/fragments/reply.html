@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="replyFrag">
-    <li>
+    <li class="reply">
         <div>
             <b th:text="${reply.author_id}"></b>
             <span th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>

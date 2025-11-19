@@ -1,64 +1,50 @@
 <ul id="task_list" th:fragment="taskListFrag(tasks)">
-    <h2>Posts</h2>
-
     <!-- Loop over top-level posts -->
     <div th:each="item : ${tasks}">
-        <div th:if="${item.parent == null or item.parent == ''}"
-             style="margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-
-            <div>
-                <b th:text="${item.author_id}"></b>
-                <span th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+        <div th:if="${item.parent == null or item.parent == ''}" class="post">
+          <div class="post-container">
+            <div class="post-header">
+              <b class="post-author" th:text="${item.author_id}"></b>
+              <span class="post-date" th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
             </div>
-            <div th:text="${item.text}"></div>
-
+            <div class="post-text" th:text="${item.text}"></div>
             <!-- Reply button for top-level post -->
             <button th:attr="
-                hx-get='/tasks/replyForm',
-                hx-vals='{&quot;id&quot;:&quot;' + ${item.id} + '&quot;}',
-                hx-target='#reply_form_' + ${item.id},
-                hx-swap='innerHTML'"
-                    style="background-color: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 5px;">
-                Reply
+                  hx-get='/tasks/replyForm',
+                  hx-vals='{&quot;id&quot;:&quot;' + ${item.id} + '&quot;}',
+                  hx-target='#reply_form_' + ${item.id},
+                  hx-swap='innerHTML'">
+              Reply
             </button>
-
+          </div>
+          <div>
             <div th:id="'reply_form_' + ${item.id}"></div>
-
             <!-- Render all replies recursively -->
-            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item.id})"
-                 th:style="'margin-left: 30px; border-left: 3px solid #e0e0e0; padding-left: 15px;'">
-            </div>
+            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item.id})"></div>
         </div>
     </div>
 </ul>
 
 <!-- Recursive fragment to render replies of any parent -->
 <div th:fragment="renderReplies(tasks, parentId)">
-    <div th:each="reply : ${tasks}" th:if="${reply.parent == parentId}">
-        <div style="margin: 10px 0; padding: 8px; background-color: #f8f9fa; border-radius: 3px;">
-
-            <div>
-                <b th:text="${reply.author_id}"></b>
-                <span th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
-            </div>
-            <div th:text="${reply.text}"></div>
-
-            <!-- Reply button for this reply -->
-            <button th:attr="
-                hx-get='/tasks/replyForm',
-                hx-vals='{&quot;id&quot;:&quot;' + ${reply.id} + '&quot;}',
-                hx-target='#reply_form_' + ${reply.id},
-                hx-swap='innerHTML'"
-                    style="background-color: #6c757d; color: white; padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; margin-top: 5px;">
-                Reply
-            </button>
-
-            <div th:id="'reply_form_' + ${reply.id}"></div>
-
-            <!-- Recursive call for replies to this reply -->
-            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply.id})"
-                 style="margin-left: 30px; border-left: 2px solid #ddd; padding-left: 10px;">
-            </div>
-        </div>
+    <div th:each="reply : ${tasks}" th:if="${reply.parent == parentId}" class="reply">
+         <div class="reply-container">
+           <div class="reply-header">
+             <b class="reply-author" th:text="${reply.author_id}"></b>
+             <span class="reply-date" th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+           </div>
+           <div class="reply-text" th:text="${reply.text}"></div>
+           <!-- Reply button for this reply -->
+           <button th:attr="
+              hx-get='/tasks/replyForm',
+              hx-vals='{&quot;id&quot;:&quot;' + ${reply.id} + '&quot;}',
+              hx-target='#reply_form_' + ${reply.id},
+              hx-swap='innerHTML'">
+             Reply
+           </button>
+         </div>
+          <div th:id="'reply_form_' + ${reply.id}"></div>
+          <!-- Recursive call for replies to this reply -->
+          <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply.id})"></div>
     </div>
 </div>
