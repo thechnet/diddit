@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+
 <head>
     <title>Ditto Spring Tasks Quickstart</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
+
 <body>
     <div id="sync-header" style="margin-bottom: 1rem;">
-        <span id="sync_state"
-              hx-ext="sse"
-              sse-connect="/ditto/sync/state"
-              sse-swap="sync_state">
-                  Sync State: True
+        <span id="sync_state" hx-ext="sse" sse-connect="/ditto/sync/state" sse-swap="sync_state">
+            Sync State: True
         </span>
         <button type="button" hx-post="/ditto/sync/toggle" hx-swap="none">
             Toggle
@@ -20,24 +20,20 @@
 
     <div id="form-section" style="flex: 1;">
         <h3>Add new Post</h3>
-        <form hx-post="/tasks" hx-swap="none"
-              hx-on::after-request="if(event.detail.successful) this.reset()">
+        <form hx-post="/tasks" hx-swap="none" hx-on::after-request="if(event.detail.successful) this.reset()">
             <input type="text" name="author_id" placeholder="Author" required
-                   style="width: 100%; padding: 6px; box-sizing: border-box;" />
+                style="width: 100%; padding: 6px; box-sizing: border-box;" />
 
             <!-- Text input bigger (multiline) -->
             <input type="text" name="title" placeholder="New Post" required
-                      style="width: 100%; height: 100px; padding: 6px; box-sizing: border-box;"/>
+                style="width: 100%; height: 100px; padding: 6px; box-sizing: border-box;" />
             <button type="submit">Add</button>
         </form>
     </div>
 
 
     <div style="display: flex; gap: 2rem;">
-        <div id="list-section" style="flex: 1;"
-             hx-ext="sse"
-             sse-connect="/tasks/stream"
-             sse-swap="task_list">
+        <div id="list-section" style="flex: 1;" hx-ext="sse" sse-connect="/tasks/stream" sse-swap="task_list">
             <div th:replace="fragments/taskList :: taskListFrag(${tasks})"></div>
         </div>
 
@@ -58,7 +54,7 @@
         }
 
         // Event delegation for dynamically loaded content
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             if (event.target.matches('[data-reply-button]')) {
                 const postId = event.target.getAttribute('data-post-id');
                 loadReplyForm(postId);
@@ -96,4 +92,5 @@
         }
     </script>
 </body>
+
 </html>
