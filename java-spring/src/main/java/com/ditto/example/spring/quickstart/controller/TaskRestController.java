@@ -2,7 +2,6 @@ package com.ditto.example.spring.quickstart.controller;
 
 import com.ditto.example.spring.quickstart.service.DittoPostService;
 import com.ditto.example.spring.quickstart.service.Post;
-import com.ditto.example.spring.quickstart.service.Task;
 import jakarta.annotation.Nonnull;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -44,12 +43,6 @@ public class TaskRestController {
         return "";
     }
 
-    @PostMapping("/tasks/{taskId}/toggle")
-    public String toggleTaskDone(@PathVariable @Nonnull String taskId) {
-        taskService.toggleTaskDone(taskId);
-        return "";
-    }
-
     @PostMapping("/tasks/reply")
     public String postReply(@RequestParam("parentId") String parentId,
                             @RequestParam("author_id") String authorId,
@@ -70,18 +63,12 @@ public class TaskRestController {
         model.addAttribute("reply", reply);
         return "";
     }
-    @DeleteMapping("/tasks/{taskId}")
-    public String deleteTask(@PathVariable @Nonnull String taskId) {
-        taskService.deleteTask(taskId);
-        return "";
-    }
 
-    @PutMapping("/tasks/{taskId}")
-    public String updateTask(@PathVariable @Nonnull String taskId, @RequestParam @Nonnull String title) {
-        taskService.updateTask(taskId, title);
-        return "";
-    }
-
+    // @DeleteMapping("/tasks/{taskId}")
+    // public String deleteTask(@PathVariable @Nonnull String taskId) {
+    //     taskService.deleteTask(taskId);
+    //     return "";
+    // }
 
     @Nonnull
     private String renderTodoList(@Nonnull List<Post> tasks) {

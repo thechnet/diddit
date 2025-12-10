@@ -34,15 +34,15 @@ public class DittoPostService {
                                             .put("title", "")
                                             .put("done", false)
                                             .put("deleted", false)
-		                                    .put("id", UUID.randomUUID().toString())
-		                                    .put("parent", "")
-		                                    .put("author_id", author_id)
-		                                    .put("time", (int) (System.currentTimeMillis() / 1000))
-		                                    .put("text", text)
-		                                    .put("attachment", "fixme")
-		                                    .put("likes", 0)
-		                                    .put("dislikes", 0)
-		                                    .put("tags", "")
+                                            .put("id", UUID.randomUUID().toString())
+                                            .put("parent", "")
+                                            .put("author_id", author_id)
+                                            .put("time", (int) (System.currentTimeMillis() / 1000))
+                                            .put("text", text)
+                                            .put("attachment", "fixme")
+                                            .put("likes", 0)
+                                            .put("dislikes", 0)
+                                            .put("tags", "")
                                             .build()
                             )
                             .build()
@@ -52,28 +52,28 @@ public class DittoPostService {
         }
     }
 
-    public void toggleTaskDone(@Nonnull String taskId) {
-        try {
-            DittoQueryResult tasks = dittoService.getDitto().getStore().execute(
-                    "SELECT * FROM %s WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("taskId", taskId)
-                            .build()
-            ).toCompletableFuture().join();
+    // public void toggleTaskDone(@Nonnull String taskId) {
+    //     try {
+    //         DittoQueryResult tasks = dittoService.getDitto().getStore().execute(
+    //                 "SELECT * FROM %s WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
+    //                 DittoCborSerializable.Dictionary.buildDictionary()
+    //                         .put("taskId", taskId)
+    //                         .build()
+    //         ).toCompletableFuture().join();
 
-            boolean isDone = tasks.getItems().get(0).getValue().get("done").getBoolean();
+    //         boolean isDone = tasks.getItems().get(0).getValue().get("done").getBoolean();
 
-            dittoService.getDitto().getStore().execute(
-                    "UPDATE %s SET done = :done WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("done", !isDone)
-                            .put("taskId",  taskId)
-                            .build()
-            ).toCompletableFuture().join();
-        } catch (Error e) {
-            throw new RuntimeException(e);
-        }
-    }
+    //         dittoService.getDitto().getStore().execute(
+    //                 "UPDATE %s SET done = :done WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
+    //                 DittoCborSerializable.Dictionary.buildDictionary()
+    //                         .put("done", !isDone)
+    //                         .put("taskId",  taskId)
+    //                         .build()
+    //         ).toCompletableFuture().join();
+    //     } catch (Error e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
     public void deleteTask(@Nonnull String taskId) {
         try {
@@ -85,20 +85,6 @@ public class DittoPostService {
                             .build()
             ).toCompletableFuture().join();
         } catch (Error e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void updateTask(@Nonnull String taskId, @Nonnull String newTitle) {
-        try {
-            dittoService.getDitto().getStore().execute(
-                    "UPDATE %s SET title = :title WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("title", newTitle)
-                            .put("taskId", taskId)
-                            .build()
-            ).toCompletableFuture().join();
-        }  catch (Error e) {
             throw new RuntimeException(e);
         }
     }
@@ -167,15 +153,15 @@ public class DittoPostService {
     private Post itemToPost(@Nonnull DittoQueryResultItem item) {
         DittoCborSerializable.Dictionary value = item.getValue();
         return new Post(
-	        value.get("id").getString(),
-	        value.get("parent").getString(),
-	        value.get("author_id").getString(),
-	        value.get("time").getInt(),
-	        value.get("text").getString(),
-	        value.get("attachment").getString(),
-	        value.get("likes").getInt(),
-	        value.get("dislikes").getInt(),
-	        value.get("tags").getString()
+            value.get("id").getString(),
+            value.get("parent").getString(),
+            value.get("author_id").getString(),
+            value.get("time").getInt(),
+            value.get("text").getString(),
+            value.get("attachment").getString(),
+            value.get("likes").getInt(),
+            value.get("dislikes").getInt(),
+            value.get("tags").getString()
         );
     }
 }

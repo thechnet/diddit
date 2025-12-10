@@ -2,7 +2,6 @@ package com.ditto.example.spring.quickstart.controller;
 
 import com.ditto.example.spring.quickstart.service.DittoPostService;
 import com.ditto.example.spring.quickstart.service.Post;
-import com.ditto.example.spring.quickstart.service.Task;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
@@ -31,11 +30,6 @@ public class TaskContentController {
         return "index";
     }
 
-    @GetMapping("/tasks/{id}/edit-form")
-    public String editForm(@PathVariable String id, Model model) {
-        model.addAttribute("id", id);
-        return "fragments/editForm :: editFormFrag";
-    }
     @GetMapping("/tasks/replyForm")
     public String getReplyForm(@RequestParam String id, Model model) {
         System.out.println("=== REPLY FORM REQUESTED ===");
