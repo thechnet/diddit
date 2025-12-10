@@ -1,11 +1,7 @@
 package com.ditto.example.spring.quickstart.service;
 
-import jakarta.annotation.Nonnull;
-
-import java.util.UUID;
-
 public record Post(
-        String id,
+        String _id,
         String parent,
         String author_id,
         long time,

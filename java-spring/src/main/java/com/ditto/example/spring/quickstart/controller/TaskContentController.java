@@ -26,19 +26,19 @@ public class TaskContentController {
     @GetMapping("/")
     public String index(Map<String, Object> model) {
         List<Post> tasks = taskService.observeAll().blockFirst();
-        model.put("tasks",  tasks != null ? tasks : Collections.emptyList());
+        model.put("tasks", tasks != null ? tasks : Collections.emptyList());
         return "index";
     }
 
     @GetMapping("/tasks/replyForm")
-    public String getReplyForm(@RequestParam String id, Model model) {
+    public String getReplyForm(@RequestParam String _id, Model model) {
         System.out.println("=== REPLY FORM REQUESTED ===");
-        System.out.println("ID: " + id);
+        System.out.println("ID: " + _id);
         System.out.println("=============================");
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("ID parameter is required");
+        if (_id == null || _id.trim().isEmpty()) {
+            throw new IllegalArgumentException("_id parameter is required");
         }
-        model.addAttribute("id", id);
+        model.addAttribute("_id", _id);
         return "fragments/replyForm :: replyFormFrag";
 
     }

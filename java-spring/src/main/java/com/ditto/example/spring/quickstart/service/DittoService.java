@@ -134,9 +134,9 @@ public class DittoService implements DisposableBean {
             }
 
             return ditto.getStore().registerObserver(
-                    "SELECT * FROM %s WHERE _id = :id".formatted(DITTO_SYNC_STATE_COLLECTION),
+                    "SELECT * FROM %s WHERE _id = :_id".formatted(DITTO_SYNC_STATE_COLLECTION),
                     DittoCborSerializable.buildDictionary()
-                            .put("id",  DITTO_SYNC_STATE_ID)
+                            .put("_id", DITTO_SYNC_STATE_ID)
                             .build(),
                     (result) -> {
                         List<? extends DittoQueryResultItem> items = result.getItems();

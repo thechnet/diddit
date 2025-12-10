@@ -1,5 +1,5 @@
 <div th:fragment="editFormFrag">
-    <form th:attr="hx-put=@{/tasks/{id}(id=${id})}"
+    <form th:attr="hx-put=@{/tasks/{_id}(_id=${_id})}"
           hx-swap="none"
           hx-on::after-request="if(event.detail.successful) { this.closest('div').innerHTML = '' }">
         <input type="text" name="title" required/>

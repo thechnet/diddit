@@ -1,9 +1,9 @@
-<div th:fragment="replyFormFrag(id)">
+<div th:fragment="replyFormFrag(_id)">
   <form hx-post="/tasks/reply" hx-target="this" hx-swap="none" method="post">
     <h1>Reply</h1>
     <input type="text" name="author_id" placeholder="Your name" required />
     <textarea name="text" placeholder="Your reply" required></textarea>
-    <input type="hidden" name="parentId" th:value="${id}" />
+    <input type="hidden" name="parentId" th:value="${_id}" />
     <button type="submit" class="primary">Post Reply</button>
   </form>
 </div>

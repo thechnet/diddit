@@ -48,7 +48,7 @@ public class TaskRestController {
                             @RequestParam("author_id") String authorId,
                             @RequestParam("text") String text,
                             Model model) {
-        taskService.replyPost(parentId, authorId, text);
+        taskService.addReply(parentId, authorId, text);
         Post reply = new Post(
                 UUID.randomUUID().toString(),
                 parentId,

@@ -4,6 +4,7 @@ import com.ditto.java.*;
 import com.ditto.java.serialization.DittoCborSerializable;
 
 import jakarta.annotation.Nonnull;
+import java.util.Objects;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -22,74 +23,11 @@ public class DittoPostService {
         this.dittoService = dittoService;
     }
 
-    public void addPost(@Nonnull String text, @Nonnull String author_id) {
-        try {
-            dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newPost)".formatted(TASKS_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                            .put(
-                                    "newPost",
-                                    DittoCborSerializable.Dictionary.buildDictionary()
-                                            .put("_id", UUID.randomUUID().toString())
-                                            .put("title", "")
-                                            .put("done", false)
-                                            .put("deleted", false)
-                                            .put("id", UUID.randomUUID().toString())
-                                            .put("parent", "")
-                                            .put("author_id", author_id)
-                                            .put("time", (int) (System.currentTimeMillis() / 1000))
-                                            .put("text", text)
-                                            .put("attachment", "fixme")
-                                            .put("likes", 0)
-                                            .put("dislikes", 0)
-                                            .put("tags", "")
-                                            .build()
-                            )
-                            .build()
-            ).toCompletableFuture().join();
-        } catch (Error e) {
-            throw new RuntimeException(e);
-        }
+    public void addPost(@Nonnull String author_id, @Nonnull String text) {
+        this.addReply(null, author_id, text);
     }
 
-    // public void toggleTaskDone(@Nonnull String taskId) {
-    //     try {
-    //         DittoQueryResult tasks = dittoService.getDitto().getStore().execute(
-    //                 "SELECT * FROM %s WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-    //                 DittoCborSerializable.Dictionary.buildDictionary()
-    //                         .put("taskId", taskId)
-    //                         .build()
-    //         ).toCompletableFuture().join();
-
-    //         boolean isDone = tasks.getItems().get(0).getValue().get("done").getBoolean();
-
-    //         dittoService.getDitto().getStore().execute(
-    //                 "UPDATE %s SET done = :done WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-    //                 DittoCborSerializable.Dictionary.buildDictionary()
-    //                         .put("done", !isDone)
-    //                         .put("taskId",  taskId)
-    //                         .build()
-    //         ).toCompletableFuture().join();
-    //     } catch (Error e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
-
-    public void deleteTask(@Nonnull String taskId) {
-        try {
-            dittoService.getDitto().getStore().execute(
-                    "UPDATE %s SET deleted = :deleted WHERE _id = :taskId".formatted(TASKS_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("deleted", true)
-                            .put("taskId", taskId)
-                            .build()
-            ).toCompletableFuture().join();
-        } catch (Error e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void replyPost(@Nonnull String parentId, @Nonnull String authorId, @Nonnull String text) {
+    public void addReply(String parentId, @Nonnull String authorId, @Nonnull String text) {
         try {
             dittoService.getDitto().getStore().execute(
                     "INSERT INTO %s DOCUMENTS (:reply)".formatted(TASKS_COLLECTION_NAME),
@@ -98,11 +36,7 @@ public class DittoPostService {
                                     "reply",
                                     DittoCborSerializable.Dictionary.buildDictionary()
                                     .put("_id", UUID.randomUUID().toString())
-                                    .put("title", "")
-                                    .put("done", false)
-                                    .put("deleted", false)
-                                    .put("id", UUID.randomUUID().toString())
-                                    .put("parent", parentId)
+                                    .put("parent", Objects.requireNonNullElse( parentId, ""))
                                     .put("author_id", authorId)
                                     .put("time", (int) (System.currentTimeMillis() / 1000))
                                     .put("text", text)
@@ -121,7 +55,7 @@ public class DittoPostService {
 
     @Nonnull
     public Flux<List<Post>> observeAll() {
-        final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
+        final String selectQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
@@ -153,7 +87,7 @@ public class DittoPostService {
     private Post itemToPost(@Nonnull DittoQueryResultItem item) {
         DittoCborSerializable.Dictionary value = item.getValue();
         return new Post(
-            value.get("id").getString(),
+            value.get("_id").getString(),
             value.get("parent").getString(),
             value.get("author_id").getString(),
             value.get("time").getInt(),

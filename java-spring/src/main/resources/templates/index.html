@@ -42,7 +42,7 @@
         function loadReplyForm(postId) {
             console.log('Loading reply form for:', postId);
 
-            fetch('/tasks/replyForm?id=' + postId)
+            fetch('/tasks/replyForm?_id=' + postId)
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('reply_form_' + postId).innerHTML = html;
@@ -70,9 +70,9 @@
                 return;
             }
 
-            console.log('Making request to /tasks/replyForm?id=' + postId);
+            console.log('Making request to /tasks/replyForm?_id=' + postId);
 
-            fetch('/tasks/replyForm?id=' + postId)
+            fetch('/tasks/replyForm?_id=' + postId)
                 .then(response => {
                     console.log('Response status:', response.status);
                     if (!response.ok) {

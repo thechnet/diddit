@@ -11,16 +11,16 @@
             <!-- Reply button for top-level post -->
             <button th:attr="
                   hx-get='/tasks/replyForm',
-                  hx-vals='{&quot;id&quot;:&quot;' + ${item.id} + '&quot;}',
-                  hx-target='#reply_form_' + ${item.id},
+                  hx-vals='{&quot;_id&quot;:&quot;' + ${item._id} + '&quot;}',
+                  hx-target='#reply_form_' + ${item._id},
                   hx-swap='innerHTML'">
               Reply
             </button>
           </div>
           <div>
-            <div th:id="'reply_form_' + ${item.id}"></div>
+            <div th:id="'reply_form_' + ${item._id}"></div>
             <!-- Render all replies recursively -->
-            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item.id})"></div>
+            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item._id})"></div>
         </div>
     </div>
 </ul>
@@ -37,14 +37,14 @@
            <!-- Reply button for this reply -->
            <button th:attr="
               hx-get='/tasks/replyForm',
-              hx-vals='{&quot;id&quot;:&quot;' + ${reply.id} + '&quot;}',
-              hx-target='#reply_form_' + ${reply.id},
+              hx-vals='{&quot;_id&quot;:&quot;' + ${reply._id} + '&quot;}',
+              hx-target='#reply_form_' + ${reply._id},
               hx-swap='innerHTML'">
              Reply
            </button>
          </div>
-          <div th:id="'reply_form_' + ${reply.id}"></div>
+          <div th:id="'reply_form_' + ${reply._id}"></div>
           <!-- Recursive call for replies to this reply -->
-          <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply.id})"></div>
+          <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply._id})"></div>
     </div>
 </div>
