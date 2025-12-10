@@ -1,8 +1,0 @@
-package(default_visibility = ["//visibility:public"])
-
-cc_library(
-    name = "cxxopts",
-    hdrs = ["include/cxxopts.hpp"],
-    includes = ["include"],
-    visibility = ["//visibility:public"],
-)
