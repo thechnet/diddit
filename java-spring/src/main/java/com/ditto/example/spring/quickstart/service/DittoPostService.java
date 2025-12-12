@@ -169,34 +169,50 @@ public class DittoPostService {
 
     @Nonnull
     public Flux<List<Post>> observeAll() {
-        final String selectQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
-        //final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY likes DESC".formatted(TASKS_COLLECTION_NAME);
+        String tasksQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
+        String usersQuery = "SELECT * FROM %s".formatted(USERS_COLLECTION_NAME);
 
+        return Flux.combineLatest(
+            observeQuery(tasksQuery, "SELECT * FROM %s".formatted(TASKS_COLLECTION_NAME)),
+            observeQuery(usersQuery, usersQuery),
+            (tasks, users) -> {
+                var userMap = users.stream()
+                    .map(DittoQueryResultItem::getValue)
+                    .collect(java.util.stream.Collectors.toMap(
+                        u -> u.get("_id").getString(),
+                        u -> u.get("username").getString(),
+                        (u1, u2) -> u1
+                    ));
 
+                return tasks.stream().map(item -> {
+                    var value = item.getValue();
+                    String authorId = value.get("author_id").getString();
+                    String username = userMap.getOrDefault(authorId, "Unknown");
+                    return itemToPost(value, username);
+                }).toList();
+            }
+        );
+    }
+
+    private Flux<List<? extends DittoQueryResultItem>> observeQuery(String query, String subscriptionQuery) {
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
             try {
-                DittoSyncSubscription subscription = ditto.getSync().registerSubscription(selectQuery);
-
-				// Need this to receive updates
-	            DittoSyncSubscription subscriptionUsers = ditto.getSync().registerSubscription("SELECT * from %s".formatted(USERS_COLLECTION_NAME));
-
-				DittoStoreObserver observer = ditto.getStore().registerObserver(selectQuery, results -> {
-                    emitter.next(results.getItems().stream().map(this::itemToPost).toList());
+                DittoSyncSubscription subscription = ditto.getSync().registerSubscription(subscriptionQuery);
+                DittoStoreObserver observer = ditto.getStore().registerObserver(query, results -> {
+                    emitter.next(results.getItems());
                 });
 
                 emitter.onDispose(() -> {
-                    // TODO: Can't just catch, this potentially leaks the `observer` resource.
                     try {
                         subscription.close();
-						subscriptionUsers.close();
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        logger.error("Error closing subscription", e);
                     }
                     try {
                         observer.close();
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        logger.error("Error closing observer", e);
                     }
                 });
             } catch (DittoError e) {
@@ -205,12 +221,11 @@ public class DittoPostService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 
-    private Post itemToPost(@Nonnull DittoQueryResultItem item) {
-        DittoCborSerializable.Dictionary value = item.getValue();
+    private Post itemToPost(@Nonnull DittoCborSerializable.Dictionary value, String username) {
         return new Post(
             value.get("_id").getString(),
             value.get("parent").getString(),
-            value.get("author_id").getString(),
+            username,
             value.get("time").getInt(),
             value.get("text").getString(),
             value.get("attachment").getString(),
