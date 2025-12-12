@@ -8,10 +8,34 @@
               <span class="post-date" th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
             </div>
             <div class="post-text" th:text="${item.text}"></div>
-            <!-- Reply button for top-level post -->
-            <button th:attr="
+              <div class="reactions">
+                  <!-- Like button -->
+                  <button
+                          hx-post="/tasks/like"
+                          hx-target="#like_count_${item._id}"
+                          th:hx-vals="|{'id':'${item._id}', 'likes':'${item.likes}'}|"
+                          hx-swap="innerHTML"
+                  >
+                      Like
+                  </button>
+
+                  <span id="like_count_${item._id}" th:text="${item.likes}"></span>
+
+                  <!-- Dislike button -->
+                  <button
+                          hx-post="/tasks/dislike"
+                          hx-target="#dislikes_count_${item._id}"
+                          th:hx-vals="|{'id':'${item._id}', 'dislikes':'${item.dislikes}'}|"
+                          hx-swap="innerHTML"
+                  >
+                      Dislike
+                  </button>
+                  <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
+              </div>
+              <!-- Reply button for top-level post -->
+              <button th:attr="
                   hx-get='/tasks/replyForm',
-                  hx-vals='{&quot;_id&quot;:&quot;' + ${item._id} + '&quot;}',
+                  hx-vals='{&quot;id&quot;:&quot;' + ${item._id} + '&quot;}',
                   hx-target='#reply_form_' + ${item._id},
                   hx-swap='innerHTML'">
               Reply
@@ -22,6 +46,7 @@
             <!-- Render all replies recursively -->
             <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item._id})"></div>
         </div>
+    </div>
     </div>
 </ul>
 
@@ -34,6 +59,30 @@
              <span class="reply-date" th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
            </div>
            <div class="reply-text" th:text="${reply.text}"></div>
+             <div class="reactions">
+                 <!-- Like button -->
+                 <button
+                         hx-post="/tasks/like"
+                         hx-target="#likes_count_${reply._id}"
+                         hx-vals='{"id":"${reply._id}", "likes":"${reply.likes}"}'
+                         hx-swap="innerHTML"
+                 >
+                     Like
+                 </button>
+
+                 <span id="likes_count_${reply._id}" th:text="${reply.likes}"></span>
+
+                 <!-- Dislike button -->
+                 <button
+                         hx-post="/tasks/dislike"
+                         hx-target="#dislikes_count_${reply._id}"
+                         hx-vals='{"id":"${reply._id}", "dislikes":"${reply.dislikes}"}'
+                         hx-swap="innerHTML"
+                 >
+                     Dislike
+                 </button>
+                 <span id="dislikes_count_${reply._id}" th:text="${reply.dislikes}"></span>
+             </div>
            <!-- Reply button for this reply -->
            <button th:attr="
               hx-get='/tasks/replyForm',

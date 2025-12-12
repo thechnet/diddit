@@ -63,6 +63,25 @@ public class TaskRestController {
         model.addAttribute("reply", reply);
         return "";
     }
+    @PostMapping("/tasks/like")
+    @ResponseBody
+    public String likePost(@RequestParam("id") String id,
+                           @RequestParam("likes") int likes) {
+        //int newLikes = likes + 1;
+        taskService.likePost(id, likes);
+        return String.valueOf(likes);
+        //return "";
+    }
+    @PostMapping("/tasks/dislike")
+    @ResponseBody
+    public String dislikePost(@RequestParam("id") String id,
+                              @RequestParam("dislikes") int dislikes) {
+        //int newDislikes = dislikes + 1;
+        taskService.dislikePost(id, dislikes);
+        return String.valueOf(dislikes);
+        //return "";
+    }
+
 
     // @DeleteMapping("/tasks/{taskId}")
     // public String deleteTask(@PathVariable @Nonnull String taskId) {

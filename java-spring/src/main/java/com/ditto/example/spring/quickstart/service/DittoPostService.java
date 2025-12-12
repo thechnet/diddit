@@ -53,9 +53,38 @@ public class DittoPostService {
         }
     }
 
+    public void likePost(@Nonnull String id, @Nonnull int likes) {
+        try {
+            dittoService.getDitto().getStore().execute(
+                    "UPDATE %s SET likes = :likes WHERE _id = :_id".formatted(TASKS_COLLECTION_NAME),
+                    DittoCborSerializable.Dictionary.buildDictionary()
+                            .put("likes", likes + 1)
+                            .put("_id", id)
+                            .build()
+            ).toCompletableFuture().join();
+        } catch (Error e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void dislikePost(@Nonnull String id, @Nonnull int dislikes) {
+        try {
+            dittoService.getDitto().getStore().execute(
+                    "UPDATE %s SET dislikes = :dislikes WHERE _id = :_id".formatted(TASKS_COLLECTION_NAME),
+                    DittoCborSerializable.Dictionary.buildDictionary()
+                            .put("dislikes", dislikes + 1)
+                            .put("_id", id)
+                            .build()
+            ).toCompletableFuture().join();
+        } catch (Error e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Nonnull
     public Flux<List<Post>> observeAll() {
         final String selectQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
+        //final String selectQuery = "SELECT * FROM %s WHERE NOT deleted ORDER BY likes DESC".formatted(TASKS_COLLECTION_NAME);
+
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
