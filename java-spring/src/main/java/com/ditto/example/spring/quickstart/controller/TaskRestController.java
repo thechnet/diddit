@@ -38,29 +38,35 @@ public class TaskRestController {
     }
 
     @PostMapping("/tasks")
-    public String addTask(@RequestParam("title") @Nonnull String title, @RequestParam("author_id") @Nonnull String author_id) {
-        taskService.addPost(title, author_id);
+    public String addTask(@RequestParam("title") @Nonnull String title, @RequestParam("username") @Nonnull String username, @RequestParam("password") @Nonnull String password) {
+        taskService.addPost(title, username, password);
         return "";
     }
+
+	@PostMapping("/registerAccount")
+	public String registerAccount(@RequestParam("username") @Nonnull String username, @RequestParam("password") @Nonnull String password) {
+		taskService.registerAccount(username, password);
+		return "";
+	}
 
     @PostMapping("/tasks/reply")
     public String postReply(@RequestParam("parentId") String parentId,
                             @RequestParam("author_id") String authorId,
                             @RequestParam("text") String text,
                             Model model) {
-        taskService.addReply(parentId, authorId, text);
-        Post reply = new Post(
-                UUID.randomUUID().toString(),
-                parentId,
-                authorId,
-                (int) (System.currentTimeMillis() / 1000),
-                text,
-                "",
-                0,
-                0,
-                ""
-        );
-        model.addAttribute("reply", reply);
+//        taskService.addReply(parentId, authorId, text);
+//        Post reply = new Post(
+//                UUID.randomUUID().toString(),
+//                parentId,
+//                authorId,
+//                (int) (System.currentTimeMillis() / 1000),
+//                text,
+//                "",
+//                0,
+//                0,
+//                ""
+//        );
+//        model.addAttribute("reply", reply);
         return "";
     }
     @PostMapping("/tasks/like")

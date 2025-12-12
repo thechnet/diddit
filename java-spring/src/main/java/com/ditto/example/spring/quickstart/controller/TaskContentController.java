@@ -23,11 +23,21 @@ public class TaskContentController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/")
+	@GetMapping("/")
+	public String login(Map<String, Object> model) {
+		return "login";
+	}
+
+	@GetMapping("/register")
+	public String register(Map<String, Object> model) {
+		return "register";
+	}
+
+    @GetMapping("/posts")
     public String index(Map<String, Object> model) {
         List<Post> tasks = taskService.observeAll().blockFirst();
         model.put("tasks", tasks != null ? tasks : Collections.emptyList());
-        return "index";
+        return "index"; /* The name of the template to render. */
     }
 
     @GetMapping("/tasks/replyForm")

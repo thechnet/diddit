@@ -3,7 +3,7 @@ package com.ditto.example.spring.quickstart.service;
 public record Post(
         String _id,
         String parent,
-        String author_id,
+        String username,
         long time,
         String text,
         String attachment,
@@ -12,8 +12,8 @@ public record Post(
         String tags
 ) {
 
-    public String getAuthorId() {
-        return author_id;
+    public String getUsername() {
+        return username;
     }
 
     public String getText() {

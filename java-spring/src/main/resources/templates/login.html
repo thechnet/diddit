@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ditto Spring Tasks Quickstart</title>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/reset-css@5.0.2/reset.css" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <!-- <link rel="icon" type="image/jpg" href="index.jpg"/> -->
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
+</head>
+
+<body>
+<main>
+  <div id="header">
+    <div id="title">Diddit</div>
+  </div>
+  <div id="form-section">
+    <h3>Login</h3>
+    <form id="login-form">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" class="primary">Login</button>
+    </form>
+  </div>
+</main>
+<script>
+  // TODO: check success
+  document.getElementById('login-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      localStorage.setItem('username', document.getElementById('username').value);
+      localStorage.setItem('password', document.getElementById('password').value);
+      window.location.href = '/posts';
+  });
+</script>
+</body>
+
+</html>

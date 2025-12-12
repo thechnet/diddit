@@ -126,7 +126,7 @@ public class DittoService implements DisposableBean {
                         DittoCborSerializable.buildDictionary()
                                 .put("sync", DittoCborSerializable.buildDictionary()
                                         .put("_id", DITTO_SYNC_STATE_ID)
-                                        .put(DITTO_SYNC_STATE_ID, false)
+                                        .put(DITTO_SYNC_STATE_ID, true)
                                         .build()
                                 )
                                 .build()
