@@ -12,26 +12,22 @@
                   <!-- Like button -->
                   <button
                           hx-post="/tasks/like"
-                          hx-target="#like_count_${item._id}"
-                          th:hx-vals="|{'id':'${item._id}', 'likes':'${item.likes}'}|"
-                          hx-swap="innerHTML"
-                  >
-                      Like
+                          th:data-id="${item._id}"
+                          th:data-likes="${item.likes}"
+                          onclick="likePost(this)"> Like
                   </button>
-
-                  <span id="like_count_${item._id}" th:text="${item.likes}"></span>
-
+                  <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
                   <!-- Dislike button -->
                   <button
                           hx-post="/tasks/dislike"
-                          hx-target="#dislikes_count_${item._id}"
-                          th:hx-vals="|{'id':'${item._id}', 'dislikes':'${item.dislikes}'}|"
-                          hx-swap="innerHTML"
-                  >
-                      Dislike
+                          th:data-id="${item._id}"
+                          th:data-dislikes="${item.dislikes}"
+                          onclick="dislikePost(this)"
+                  >Dislike
                   </button>
                   <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
               </div>
+
               <!-- Reply button for top-level post -->
               <button th:attr="
                   hx-get='/tasks/replyForm',
@@ -63,25 +59,23 @@
                  <!-- Like button -->
                  <button
                          hx-post="/tasks/like"
-                         hx-target="#likes_count_${reply._id}"
-                         hx-vals='{"id":"${reply._id}", "likes":"${reply.likes}"}'
-                         hx-swap="innerHTML"
-                 >
-                     Like
+                         th:data-id="${reply._id}"
+                         th:data-likes="${reply.likes}"
+                         onclick="likePost(this)"
+                 >Like
                  </button>
-
                  <span id="likes_count_${reply._id}" th:text="${reply.likes}"></span>
-
                  <!-- Dislike button -->
                  <button
                          hx-post="/tasks/dislike"
-                         hx-target="#dislikes_count_${reply._id}"
-                         hx-vals='{"id":"${reply._id}", "dislikes":"${reply.dislikes}"}'
-                         hx-swap="innerHTML"
+                         th:data-id="${reply._id}"
+                         th:data-dislikes="${reply.dislikes}"
+                         onclick="dislikePost(this)"
                  >
                      Dislike
                  </button>
                  <span id="dislikes_count_${reply._id}" th:text="${reply.dislikes}"></span>
+
              </div>
            <!-- Reply button for this reply -->
            <button th:attr="
@@ -96,4 +90,42 @@
           <!-- Recursive call for replies to this reply -->
           <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply._id})"></div>
     </div>
+    <script>
+        function likePost(button) {
+            const id = button.getAttribute('data-id');
+            const likes = button.getAttribute('data-likes');
+
+            fetch('/tasks/like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
+            })
+                .then(response => response.text())
+                .then(newLikes => {
+                    document.getElementById('likes_count_' + id).textContent = newLikes;
+                    // Update the data attribute for next click
+                    button.setAttribute('data-likes', newLikes);
+                });
+        }
+
+        function dislikePost(button) {
+            const id = button.getAttribute('data-id');
+            const dislikes = button.getAttribute('data-dislikes');
+
+            fetch('/tasks/dislike', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
+            })
+                .then(response => response.text())
+                .then(newDislikes => {
+                    document.getElementById('dislikes_count_' + id).textContent = newDislikes;
+                    button.setAttribute('data-dislikes', newDislikes);
+                });
+        }
+    </script>
 </div>

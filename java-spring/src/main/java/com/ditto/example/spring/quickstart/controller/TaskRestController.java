@@ -73,19 +73,15 @@ public class TaskRestController {
     @ResponseBody
     public String likePost(@RequestParam("id") String id,
                            @RequestParam("likes") int likes) {
-        //int newLikes = likes + 1;
-        taskService.likePost(id, likes);
-        return String.valueOf(likes);
-        //return "";
+        int newLikes = taskService.likePost(id, likes);
+        return String.valueOf(newLikes);
     }
     @PostMapping("/tasks/dislike")
     @ResponseBody
     public String dislikePost(@RequestParam("id") String id,
                               @RequestParam("dislikes") int dislikes) {
-        //int newDislikes = dislikes + 1;
-        taskService.dislikePost(id, dislikes);
-        return String.valueOf(dislikes);
-        //return "";
+        int newDislikes = taskService.dislikePost(id, dislikes);
+        return String.valueOf(newDislikes);
     }
 
 

@@ -140,31 +140,37 @@ public class DittoPostService {
         }
     }
 
-    public void likePost(@Nonnull String id, @Nonnull int likes) {
-        try {
+    public int likePost(@Nonnull String id, @Nonnull int likes) {
+
+		int newLikes = likes + 1;
+		try {
             dittoService.getDitto().getStore().execute(
                     "UPDATE %s SET likes = :likes WHERE _id = :_id".formatted(TASKS_COLLECTION_NAME),
                     DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("likes", likes + 1)
+                            .put("likes", newLikes)
                             .put("_id", id)
                             .build()
             ).toCompletableFuture().join();
         } catch (Error e) {
             throw new RuntimeException(e);
         }
+		return newLikes;
     }
-    public void dislikePost(@Nonnull String id, @Nonnull int dislikes) {
-        try {
+    public int dislikePost(@Nonnull String id, @Nonnull int dislikes) {
+
+		int newDislikes = dislikes + 1;
+		try {
             dittoService.getDitto().getStore().execute(
                     "UPDATE %s SET dislikes = :dislikes WHERE _id = :_id".formatted(TASKS_COLLECTION_NAME),
                     DittoCborSerializable.Dictionary.buildDictionary()
-                            .put("dislikes", dislikes + 1)
+                            .put("dislikes", newDislikes)
                             .put("_id", id)
                             .build()
             ).toCompletableFuture().join();
         } catch (Error e) {
             throw new RuntimeException(e);
         }
+		return newDislikes;
     }
 
     @Nonnull
