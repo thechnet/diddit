@@ -173,6 +173,42 @@ public class DittoPostService {
 		return newDislikes;
     }
 
+	private void _deleteTask(@Nonnull String post_id) {
+		/* Delete all my children. */
+		try {
+			var result = dittoService.getDitto().getStore().execute(
+				"SELECT * FROM %s WHERE parent = :post_id".formatted(TASKS_COLLECTION_NAME),
+				DittoCborSerializable.Dictionary.buildDictionary()
+					.put("post_id", post_id)
+					.build()
+			).toCompletableFuture().join();
+
+			List<String> child_ids = result.getItems().stream()
+				.map(item -> item.getValue().get("_id").getString())
+				.toList();
+
+			for (var child_id : child_ids) {
+				this._deleteTask(child_id);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		// TODO: verify author
+
+		/* Delete myself. */
+		try {
+			dittoService.getDitto().getStore().execute(
+				"DELETE FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+				DittoCborSerializable.Dictionary.buildDictionary()
+					.put("post_id", post_id)
+					.build()
+			).toCompletableFuture().join();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void deleteTask(@Nonnull String username, @Nonnull String password, @Nonnull String post_id) {
 		var userOrEmpty = getUserByUsername(username);
 		if (userOrEmpty.isEmpty()) {
@@ -186,17 +222,7 @@ public class DittoPostService {
 			return;
 		}
 
-		// TODO: verify author
-		try {
-			dittoService.getDitto().getStore().execute(
-				"DELETE FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
-				DittoCborSerializable.Dictionary.buildDictionary()
-					.put("post_id", post_id)
-					.build()
-			).toCompletableFuture().join();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		this._deleteTask(post_id);
 	}
 
     @Nonnull
