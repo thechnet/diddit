@@ -194,8 +194,6 @@ public class DittoPostService {
 			throw new RuntimeException(e);
 		}
 
-		// TODO: verify author
-
 		/* Delete myself. */
 		try {
 			dittoService.getDitto().getStore().execute(
@@ -220,6 +218,30 @@ public class DittoPostService {
 		if (!authenticate(user, password)) {
 			logger.error("Invalid password for user: {}", username);
 			return;
+		}
+
+		/* Authenticate. */
+		try {
+			var result = dittoService.getDitto().getStore().execute(
+				"SELECT * FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+				DittoCborSerializable.Dictionary.buildDictionary()
+					.put("post_id", post_id)
+					.build()
+			).toCompletableFuture().join();
+
+			List<String> author_ids = result.getItems().stream()
+				.map(item -> item.getValue().get("author_id").getString())
+				.toList();
+			assert author_ids.size() == 1;
+
+			var author_id = author_ids.get(0);
+
+			if (!user.get("_id").getString().equals(author_id)) {
+				logger.error("Cannot delete other user's post");
+				return;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		this._deleteTask(post_id);
