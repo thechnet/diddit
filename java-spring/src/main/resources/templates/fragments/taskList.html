@@ -1,131 +1,155 @@
 <ul id="task_list" th:fragment="taskListFrag(tasks)">
-    <!-- Loop over top-level posts -->
-    <div th:each="item : ${tasks}">
-        <div th:if="${item.parent == null or item.parent == ''}" class="post">
-          <div class="post-container">
-            <div class="post-header">
-              <b class="post-author" th:text="${item.username}"></b>
-              <span class="post-date" th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
-            </div>
-            <div class="post-text" th:text="${item.text}"></div>
-              <div class="reactions">
-                  <!-- Like button -->
-                  <button
-                          hx-post="/tasks/like"
-                          th:data-id="${item._id}"
-                          th:data-likes="${item.likes}"
-                          onclick="likePost(this)"> Like
-                  </button>
-                  <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
-                  <!-- Dislike button -->
-                  <button
-                          hx-post="/tasks/dislike"
-                          th:data-id="${item._id}"
-                          th:data-dislikes="${item.dislikes}"
-                          onclick="dislikePost(this)"
-                  >Dislike
-                  </button>
-                  <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
-              </div>
+  <!-- Loop over top-level posts -->
+  <div th:each="item : ${tasks}">
+    <div th:if="${item.parent == null or item.parent == ''}" class="post">
+      <div class="post-container">
+        <div class="post-header">
+          <b class="post-author" th:text="${item.username}"></b>
+          <span class="post-date"
+                th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+        </div>
+        <div class="post-text" th:text="${item.text}"></div>
+        <div class="reactions">
+          <!-- Like button -->
+          <button
+              hx-post="/tasks/like"
+              th:data-id="${item._id}"
+              th:data-likes="${item.likes}"
+              onclick="likePost(this)"> Like
+          </button>
+          <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
+          <!-- Dislike button -->
+          <button
+              hx-post="/tasks/dislike"
+              th:data-id="${item._id}"
+              th:data-dislikes="${item.dislikes}"
+              onclick="dislikePost(this)"
+          >Dislike
+          </button>
+          <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
 
-              <!-- Reply button for top-level post -->
-              <button th:attr="
+          <!-- Reply button for top-level post -->
+          <button th:attr="
                   hx-get='/tasks/replyForm',
                   hx-vals='{&quot;_id&quot;:&quot;' + ${item._id} + '&quot;}',
                   hx-target='#reply_form_' + ${item._id},
-                  hx-swap='innerHTML'">
-              Reply
-            </button>
-          </div>
-          <div>
-            <div th:id="'reply_form_' + ${item._id}"></div>
-            <!-- Render all replies recursively -->
-            <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item._id})"></div>
+                  hx-swap='innerHTML'" class="primary">
+            Reply
+          </button>
+
+          <button
+              th:data-_id="${item._id}"
+              onclick="deletePost(this)"
+          >Delete
+          </button>
         </div>
+      </div>
+      <div>
+        <div th:id="'reply_form_' + ${item._id}"></div>
+        <!-- Render all replies recursively -->
+        <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${item._id})"></div>
+      </div>
     </div>
-    </div>
+  </div>
 </ul>
 
 <!-- Recursive fragment to render replies of any parent -->
 <div th:fragment="renderReplies(tasks, parentId)">
-    <div th:each="reply : ${tasks}" th:if="${reply.parent == parentId}" class="reply">
-         <div class="reply-container">
-           <div class="reply-header">
-             <b class="reply-author" th:text="${reply.username}"></b>
-             <span class="reply-date" th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
-           </div>
-           <div class="reply-text" th:text="${reply.text}"></div>
-             <div class="reactions">
-                 <!-- Like button -->
-                 <button
-                         hx-post="/tasks/like"
-                         th:data-id="${reply._id}"
-                         th:data-likes="${reply.likes}"
-                         onclick="likePost(this)"
-                 >Like
-                 </button>
-                 <span id="likes_count_${reply._id}" th:text="${reply.likes}"></span>
-                 <!-- Dislike button -->
-                 <button
-                         hx-post="/tasks/dislike"
-                         th:data-id="${reply._id}"
-                         th:data-dislikes="${reply.dislikes}"
-                         onclick="dislikePost(this)"
-                 >
-                     Dislike
-                 </button>
-                 <span id="dislikes_count_${reply._id}" th:text="${reply.dislikes}"></span>
+  <div th:each="reply : ${tasks}" th:if="${reply.parent == parentId}" class="reply">
+    <div class="reply-container">
+      <div class="reply-header">
+        <b class="reply-author" th:text="${reply.username}"></b>
+        <span class="reply-date"
+              th:text="${#dates.format(new java.util.Date(reply.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+      </div>
+      <div class="reply-text" th:text="${reply.text}"></div>
+      <div class="reactions">
+        <!-- Like button -->
+        <button
+            hx-post="/tasks/like"
+            th:data-id="${reply._id}"
+            th:data-likes="${reply.likes}"
+            onclick="likePost(this)"
+        >Like
+        </button>
+        <span id="likes_count_${reply._id}" th:text="${reply.likes}"></span>
+        <!-- Dislike button -->
+        <button
+            hx-post="/tasks/dislike"
+            th:data-id="${reply._id}"
+            th:data-dislikes="${reply.dislikes}"
+            onclick="dislikePost(this)"
+        >
+          Dislike
+        </button>
+        <span id="dislikes_count_${reply._id}" th:text="${reply.dislikes}"></span>
 
-             </div>
-           <!-- Reply button for this reply -->
-           <button th:attr="
+      </div>
+      <!-- Reply button for this reply -->
+      <button th:attr="
               hx-get='/tasks/replyForm',
               hx-vals='{&quot;_id&quot;:&quot;' + ${reply._id} + '&quot;}',
               hx-target='#reply_form_' + ${reply._id},
               hx-swap='innerHTML'">
-             Reply
-           </button>
-         </div>
-          <div th:id="'reply_form_' + ${reply._id}"></div>
-          <!-- Recursive call for replies to this reply -->
-          <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply._id})"></div>
+        Reply
+      </button>
     </div>
-    <script>
-        function likePost(button) {
-            const id = button.getAttribute('data-id');
-            const likes = button.getAttribute('data-likes');
+    <div th:id="'reply_form_' + ${reply._id}"></div>
+    <!-- Recursive call for replies to this reply -->
+    <div th:insert="fragments/taskList :: renderReplies(${tasks}, ${reply._id})"></div>
+  </div>
+  <script>
+    function likePost(button) {
+        const id = button.getAttribute('data-id');
+        const likes = button.getAttribute('data-likes');
 
-            fetch('/tasks/like', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
-            })
-                .then(response => response.text())
-                .then(newLikes => {
-                    document.getElementById('likes_count_' + id).textContent = newLikes;
-                    // Update the data attribute for next click
-                    button.setAttribute('data-likes', newLikes);
-                });
-        }
+        fetch('/tasks/like', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
+        })
+            .then(response => response.text())
+            .then(newLikes => {
+                document.getElementById('likes_count_' + id).textContent = newLikes;
+                // Update the data attribute for next click
+                button.setAttribute('data-likes', newLikes);
+            });
+    }
 
-        function dislikePost(button) {
-            const id = button.getAttribute('data-id');
-            const dislikes = button.getAttribute('data-dislikes');
+    function dislikePost(button) {
+        const id = button.getAttribute('data-id');
+        const dislikes = button.getAttribute('data-dislikes');
 
-            fetch('/tasks/dislike', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
-            })
-                .then(response => response.text())
-                .then(newDislikes => {
-                    document.getElementById('dislikes_count_' + id).textContent = newDislikes;
-                    button.setAttribute('data-dislikes', newDislikes);
-                });
-        }
-    </script>
+        fetch('/tasks/dislike', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
+        })
+            .then(response => response.text())
+            .then(newDislikes => {
+                document.getElementById('dislikes_count_' + id).textContent = newDislikes;
+                button.setAttribute('data-dislikes', newDislikes);
+            });
+    }
+
+    function deletePost(button) {
+        const username = localStorage.getItem("username");
+        const password = localStorage.getItem("password");
+        const _id = button.getAttribute('data-_id');
+
+        // TODO: recursive
+        fetch('/tasks/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&_id=${encodeURIComponent(_id)}`
+        })
+            .then(response => response.text());
+    }
+  </script>
 </div>

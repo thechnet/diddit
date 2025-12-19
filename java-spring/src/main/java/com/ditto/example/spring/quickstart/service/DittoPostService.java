@@ -173,6 +173,32 @@ public class DittoPostService {
 		return newDislikes;
     }
 
+	public void deleteTask(@Nonnull String username, @Nonnull String password, @Nonnull String post_id) {
+		var userOrEmpty = getUserByUsername(username);
+		if (userOrEmpty.isEmpty()) {
+			logger.error("User not found: '{}'", username);
+			return;
+		}
+
+		var user = userOrEmpty.get();
+		if (!authenticate(user, password)) {
+			logger.error("Invalid password for user: {}", username);
+			return;
+		}
+
+		// TODO: verify author
+		try {
+			dittoService.getDitto().getStore().execute(
+				"DELETE FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+				DittoCborSerializable.Dictionary.buildDictionary()
+					.put("post_id", post_id)
+					.build()
+			).toCompletableFuture().join();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
     @Nonnull
     public Flux<List<Post>> observeAll() {
         String tasksQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
