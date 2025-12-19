@@ -84,15 +84,21 @@
         </button>
         <span id="dislikes_count_${reply._id}" th:text="${reply.dislikes}"></span>
 
-      </div>
-      <!-- Reply button for this reply -->
-      <button th:attr="
+        <!-- Reply button for this reply -->
+        <button th:attr="
               hx-get='/tasks/replyForm',
               hx-vals='{&quot;_id&quot;:&quot;' + ${reply._id} + '&quot;}',
               hx-target='#reply_form_' + ${reply._id},
-              hx-swap='innerHTML'">
-        Reply
-      </button>
+              hx-swap='innerHTML'" class="primary">
+          Reply
+        </button>
+
+        <button
+            th:data-_id="${reply._id}"
+            onclick="deletePost(this)"
+        >Delete
+        </button>
+      </div>
     </div>
     <div th:id="'reply_form_' + ${reply._id}"></div>
     <!-- Recursive call for replies to this reply -->
