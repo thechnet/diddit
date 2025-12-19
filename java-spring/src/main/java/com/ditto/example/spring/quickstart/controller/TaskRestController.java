@@ -50,23 +50,20 @@ public class TaskRestController {
 	}
 
     @PostMapping("/tasks/reply")
-    public String postReply(@RequestParam("parentId") String parentId,
-                            @RequestParam("author_id") String authorId,
-                            @RequestParam("text") String text,
-                            Model model) {
-//        taskService.addReply(parentId, authorId, text);
-//        Post reply = new Post(
-//                UUID.randomUUID().toString(),
-//                parentId,
-//                authorId,
-//                (int) (System.currentTimeMillis() / 1000),
-//                text,
-//                "",
-//                0,
-//                0,
-//                ""
-//        );
-//        model.addAttribute("reply", reply);
+    public String postReply(@RequestParam("username") @Nonnull String username, @RequestParam("password") @Nonnull String password, @RequestParam("text") @Nonnull String text, @RequestParam("_id") @Nonnull String _id, Model model) {
+        taskService.addReply(_id, text, username, password);
+        Post reply = new Post(
+                UUID.randomUUID().toString(),
+                _id,
+                username,
+                (int) (System.currentTimeMillis() / 1000),
+                text,
+                "",
+                0,
+                0,
+                ""
+        );
+        model.addAttribute("reply", reply);
         return "";
     }
     @PostMapping("/tasks/like")

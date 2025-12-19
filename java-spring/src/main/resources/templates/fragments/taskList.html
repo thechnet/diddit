@@ -31,7 +31,7 @@
               <!-- Reply button for top-level post -->
               <button th:attr="
                   hx-get='/tasks/replyForm',
-                  hx-vals='{&quot;id&quot;:&quot;' + ${item._id} + '&quot;}',
+                  hx-vals='{&quot;_id&quot;:&quot;' + ${item._id} + '&quot;}',
                   hx-target='#reply_form_' + ${item._id},
                   hx-swap='innerHTML'">
               Reply

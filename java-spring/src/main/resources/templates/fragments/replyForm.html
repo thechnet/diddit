@@ -1,9 +1,10 @@
 <div th:fragment="replyFormFrag(_id)">
-  <form hx-post="/tasks/reply" hx-target="this" hx-swap="none" method="post">
+  <form hx-post="/tasks/reply" hx-target="this" hx-swap="none" method="post" onsubmit="addCredentials(this)">
     <h1>Reply</h1>
-    <input type="text" name="author_id" placeholder="Your name" required />
-    <textarea name="text" placeholder="Your reply" required></textarea>
-    <input type="hidden" name="parentId" th:value="${_id}" />
-    <button type="submit" class="primary">Post Reply</button>
+    <input type="hidden" name="username" />
+    <input type="hidden" name="password" />
+    <input type="hidden" name="_id" th:value="${_id}" />
+    <input type="text" name="text" placeholder="New Reply" required />
+    <button type="submit" class="primary">Add Reply</button>
   </form>
 </div>
