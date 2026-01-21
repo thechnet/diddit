@@ -12,10 +12,49 @@
 
 <body>
 <main>
-  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list">
+  <div id="header">
+    <div id="title">Drilldown</div>
+  </div>
+  <div id="sync-header">
+    <span id="sync_state" hx-ext="sse" sse-connect="/ditto/sync/state" sse-swap="sync_state">
+        Sync State: True
+    </span>
+    <button type="button" hx-post="/ditto/sync/toggle" hx-swap="none">
+      Toggle
+    </button>
+  </div>
+
+  <div id="form-section">
+<!--    <h3>Add Post</h3>-->
+    <form hx-post="/tasks"
+          hx-swap="none"
+          hx-on::after-request="if(event.detail.successful) this.reset()"
+          onsubmit="addCredentials(this)">
+
+      <input type="hidden" name="username" />
+      <input type="hidden" name="password" />
+      <input type="text" name="title" placeholder="New Post" required />
+
+      <div style="margin-top: 10px;">
+        <input type="file" name="file" />
+      </div>
+
+      <button type="submit" class="primary" style="margin-top: 10px;">Post</button>
+    </form>
+  </div>
+
+  <h2 id="list-header">Posts</h2>
+  <div id="list-section" hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list">
     <ul id="post_list"></ul>
   </div>
 </main>
+
+<script>
+  function addCredentials(form) {
+    form.username.value = localStorage.getItem("username");
+    form.password.value = localStorage.getItem("password");
+  }
+</script>
 </body>
 
 </html>
