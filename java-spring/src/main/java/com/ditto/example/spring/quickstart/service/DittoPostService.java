@@ -96,11 +96,11 @@ public class DittoPostService {
 		}
 	}
 
-	public void addPost(@Nonnull String text, @Nonnull String username, @Nonnull String password) {
-		this.addReply(null, text, username, password);
+	public void addPost(@Nonnull String text, @Nonnull String username, @Nonnull String password, String attachmentPath) {
+		this.addReply(null, text, username, password, attachmentPath);
 	}
 
-    public void addReply(String parentId, @Nonnull String text, @Nonnull String username, @Nonnull String password) {
+    public void addReply(String parentId, @Nonnull String text, @Nonnull String username, @Nonnull String password, String attachmentPath) {
 		listUsers();
 
 		var userOrEmpty = getUserByUsername(username);
@@ -127,7 +127,7 @@ public class DittoPostService {
                                     .put("author_id", user.get("_id").getString())
                                     .put("time", (int) (System.currentTimeMillis() / 1000))
                                     .put("text", text)
-                                    .put("attachment", "")
+                                    .put("attachment", Objects.requireNonNullElse(attachmentPath, ""))
                                     .put("likes", 0)
                                     .put("dislikes", 0)
                                     .put("tags", "")
