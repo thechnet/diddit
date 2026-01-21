@@ -27,6 +27,7 @@
   <div id="form-section">
 <!--    <h3>Add Post</h3>-->
     <form hx-post="/tasks"
+          hx-encoding="multipart/form-data"
           hx-swap="none"
           hx-on::after-request="if(event.detail.successful) this.reset()"
           onsubmit="addCredentials(this)">
@@ -53,6 +54,30 @@
   function addCredentials(form) {
     form.username.value = localStorage.getItem("username");
     form.password.value = localStorage.getItem("password");
+  }
+  function likePost(button){
+    const id = button.getAttribute('data-id');
+      const likes = button.getAttribute('data-likes');
+      fetch('/tasks/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
+      }).then(response => response.text()).then(newLikes => {
+          document.getElementById('likes_count_' + id).textContent = newLikes;
+          button.setAttribute('data-likes', newLikes);
+      });
+  }
+  function dislikePost(button){
+    const id = button.getAttribute('data-id');
+      const dislikes = button.getAttribute('data-dislikes');
+      fetch('/tasks/dislike', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
+      }).then(response => response.text()).then(newDislikes => {
+          document.getElementById('dislikes_count_' + id).textContent = newDislikes;
+          button.setAttribute('data-dislikes', newDislikes);
+      });
   }
 </script>
 </body>
