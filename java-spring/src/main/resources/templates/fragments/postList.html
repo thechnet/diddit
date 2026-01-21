@@ -8,7 +8,14 @@
           <span class="post-date"
                 th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
         </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
         <div class="post-text" th:text="${item.text}"></div>
+        <!-- Attachments -->
+        <div th:if="${item.attachment != null and item.attachment != ''}">
+                <img th:src="${item.attachment}" 
+                     style="max-width: 100%; height: auto; border-radius: 8px; display: block;" />
+            </div>
+        </div>
         <div class="reactions">
           <!-- Like button -->
           <button
