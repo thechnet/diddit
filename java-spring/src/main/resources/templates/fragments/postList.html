@@ -1,0 +1,49 @@
+<ul id="task_list" th:fragment="taskListFrag(tasks)">
+  <!-- Loop over top-level posts -->
+  <div th:each="item : ${tasks}">
+    <div th:if="${(parent == null or parent == '') ? true : (item.parent == parent)}" class="post">
+      <div class="post-container">
+        <div class="post-header">
+          <b class="post-author" th:text="${item.username}"></b>
+          <span class="post-date"
+                th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+        </div>
+        <div class="post-text" th:text="${item.text}"></div>
+        <div class="reactions">
+          <!-- Like button -->
+          <button
+              hx-post="/tasks/like"
+              th:data-id="${item._id}"
+              th:data-likes="${item.likes}"
+              onclick="likePost(this)"> Like
+          </button>
+          <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
+          <!-- Dislike button -->
+          <button
+              hx-post="/tasks/dislike"
+              th:data-id="${item._id}"
+              th:data-dislikes="${item.dislikes}"
+              onclick="dislikePost(this)"
+          >Dislike
+          </button>
+          <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
+
+          <!-- Reply button for top-level post -->
+          <button th:attr="
+                  hx-get='/tasks/replyForm',
+                  hx-vals='{&quot;_id&quot;:&quot;' + ${item._id} + '&quot;}',
+                  hx-target='#reply_form_' + ${item._id},
+                  hx-swap='innerHTML'" class="primary">
+            Reply
+          </button>
+
+          <button
+              th:data-_id="${item._id}"
+              onclick="deletePost(this)"
+          >Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ul>

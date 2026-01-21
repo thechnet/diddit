@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/reset-css@5.0.2/reset.css" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
+</head>
+
+<body>
+<main>
+  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list">
+    <ul id="post_list"></ul>
+  </div>
+</main>
+</body>
+
+</html>

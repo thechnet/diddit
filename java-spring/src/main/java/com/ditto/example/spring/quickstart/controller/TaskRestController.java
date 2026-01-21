@@ -3,6 +3,8 @@ package com.ditto.example.spring.quickstart.controller;
 import com.ditto.example.spring.quickstart.service.DittoPostService;
 import com.ditto.example.spring.quickstart.service.Post;
 import jakarta.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +27,14 @@ public class TaskRestController {
     @Nonnull
     private final SpringTemplateEngine templateEngine;
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private final Logger logger = LoggerFactory.getLogger(TaskRestController.class);
 
     public TaskRestController(final DittoPostService taskService, final SpringTemplateEngine templateEngine) {
         this.taskService = taskService;
         this.templateEngine = templateEngine;
     }
 
+    /* Cascading version. */
     @GetMapping(value = "/tasks/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> streamTasks() {
         return taskService.observeAll().map(tasks -> {
@@ -39,6 +42,18 @@ public class TaskRestController {
             return ServerSentEvent.builder(htmlFragment)
                     .event("task_list")
                     .build();
+        });
+    }
+
+    /* Drill-down version. */
+    @GetMapping(value = "/posts/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<String>> streamPosts(@RequestParam(name = "parent", required = false) String parent) {
+        logger.error("------------------ {}", parent);
+        return taskService.observeAll().map(tasks -> {
+            String htmlFragment = renderPostList(tasks, parent);
+            return ServerSentEvent.builder(htmlFragment)
+                .event("post_list")
+                .build();
         });
     }
 
@@ -120,5 +135,13 @@ public class TaskRestController {
         Context context = new Context();
         context.setVariable("tasks", tasks);
         return templateEngine.process("fragments/taskList", Set.of("taskListFrag"), context);
+    }
+
+    @Nonnull
+    private String renderPostList(@Nonnull List<Post> tasks, String parent) {
+        Context context = new Context();
+        context.setVariable("tasks", tasks);
+        context.setVariable("parent", parent);
+        return templateEngine.process("fragments/postList", Set.of("taskListFrag"), context);
     }
 }
