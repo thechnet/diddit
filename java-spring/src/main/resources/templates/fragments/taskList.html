@@ -11,7 +11,7 @@
                     <div class="post-text" th:text="${item.text}"></div>
 
                     <div th:if="${item.attachment != null and item.attachment != ''}">
-                       <img th:src="${item.attachment}" style="max-width: 100%; height: auto; border-radius: 8px; display: block;" />
+                       <img th:src="${item.attachment}" style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@
                 <div class="reply-text" th:text="${reply.text}"></div>
 
                 <div th:if="${reply.attachment != null and reply.attachment != ''}">
-                    <img th:src="@{'/uploads/' + ${reply.attachment}}" style="max-width: 100%; height: auto; border-radius: 8px; display: block;" />
+                    <img th:src="@{'/uploads/' + ${reply.attachment}}" style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />
                 </div>
             </div>
 
