@@ -42,8 +42,8 @@
   </div>
 
   <ul id="task_list"></ul>
-  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list"
-       style="display:none;"></div>
+
+  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list" style="display:none;"></div>
 </main>
 
 <script>
@@ -52,33 +52,38 @@
     form.password.value = localStorage.getItem("password");
   }
 
-  function likePost(button){
+  function likePost(event){
+    const button = event.currentTarget;
     const id = button.getAttribute('data-id');
-      const likes = button.getAttribute('data-likes');
-      fetch('/tasks/like', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
-      }).then(response => response.text()).then(newLikes => {
-          document.getElementById('likes_count_' + id).textContent = newLikes;
-          button.setAttribute('data-likes', newLikes);
-      });
+    const likes = button.getAttribute('data-likes');
+    fetch('/tasks/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
+    }).then(response => response.text()).then(newLikes => {
+        document.getElementById('likes_count_' + id).textContent = newLikes;
+        button.setAttribute('data-likes', newLikes);
+    });
+    event.stopPropagation();
   }
 
-  function dislikePost(button){
+  function dislikePost(event){
+    const button = event.currentTarget;
     const id = button.getAttribute('data-id');
-      const dislikes = button.getAttribute('data-dislikes');
-      fetch('/tasks/dislike', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
-      }).then(response => response.text()).then(newDislikes => {
-          document.getElementById('dislikes_count_' + id).textContent = newDislikes;
-          button.setAttribute('data-dislikes', newDislikes);
-      });
+    const dislikes = button.getAttribute('data-dislikes');
+    fetch('/tasks/dislike', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
+    }).then(response => response.text()).then(newDislikes => {
+        document.getElementById('dislikes_count_' + id).textContent = newDislikes;
+        button.setAttribute('data-dislikes', newDislikes);
+    });
+    event.stopPropagation();
   }
 
-  function deletePost(button) {
+  function deletePost(event) {
+    const button = event.currentTarget;
     const username = localStorage.getItem("username");
     const password = localStorage.getItem("password");
     const _id = button.getAttribute('data-_id');
@@ -91,7 +96,14 @@
       body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&_id=${encodeURIComponent(_id)}`
     })
       .then(response => response.text());
-    }
+
+    event.stopPropagation();
+  }
+
+  function drillInto(event) {
+    window.location.href = `/drilldown?parent=${event.currentTarget.getAttribute('data-_id')}`;
+    event.stopPropagation();
+  }
 </script>
 </body>
 

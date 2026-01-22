@@ -1,4 +1,4 @@
-<div th:fragment="postContainer(item)" class="post-container" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="postContainer(item)" class="post-container" xmlns:th="http://www.thymeleaf.org" th:data-_id="${item._id}" onclick="drillInto(event)">
 
   <!-- Header -->
   <div class="post-header">
@@ -18,14 +18,14 @@
 
   <div class="reactions">
     <!-- Like button -->
-    <button hx-post="/tasks/like" th:data-id="${item._id}" th:data-likes="${item.likes}" onclick="likePost(this)">Like</button>
+    <button hx-post="/tasks/like" th:data-id="${item._id}" th:data-likes="${item.likes}" onclick="likePost(event)">Like</button>
     <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
 
     <!-- Dislike button -->
-    <button hx-post="/tasks/dislike" th:data-id="${item._id}" th:data-dislikes="${item.dislikes}" onclick="dislikePost(this)">Dislike</button>
+    <button hx-post="/tasks/dislike" th:data-id="${item._id}" th:data-dislikes="${item.dislikes}" onclick="dislikePost(event)">Dislike</button>
     <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
 
     <!-- Delete button -->
-    <button th:data-_id="${item._id}" onclick="deletePost(this)">Delete</button>
+    <button th:data-_id="${item._id}" onclick="deletePost(event)">Delete</button>
   </div>
 </div>

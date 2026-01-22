@@ -108,6 +108,14 @@ main {
     padding: 1rem;
 }
 
+ul .post-container {
+    cursor: pointer;
+}
+
+ul .post-container:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
 .reply {
     margin-top: 0.5rem;
     margin-left: 1rem;
