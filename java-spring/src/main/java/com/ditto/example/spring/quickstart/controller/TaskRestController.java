@@ -62,6 +62,7 @@ public class TaskRestController {
             @RequestParam("title") @Nonnull String title,
             @RequestParam("username") @Nonnull String username,
             @RequestParam("password") @Nonnull String password,
+            @RequestParam("parent") String parent,
             @RequestParam(value = "file", required = false) MultipartFile file,
             Model model
     ) {
@@ -77,7 +78,7 @@ public class TaskRestController {
             }
         }
 
-        taskService.addPost(title, username, password, attachmentBase64);
+        taskService.addReply(parent, title, username, password, attachmentBase64);
 
         List<Post> tasks = taskService.observeAll().blockFirst();
         return renderTodoList(tasks);

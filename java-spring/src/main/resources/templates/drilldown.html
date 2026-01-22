@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/reset-css@5.0.2/reset.css" />
-  <link rel="stylesheet" type="text/css" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/reset-css@5.0.2/reset.css"/>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
 </head>
@@ -32,16 +32,18 @@
           hx-swap="none"
           hx-on::after-request="if(event.detail.successful) this.reset()"
           onsubmit="addCredentials(this)">
-      <input type="hidden" name="username" />
-      <input type="hidden" name="password" />
-      <input type="text" name="title" placeholder="New Post" required />
-      <div style="margin-top: 10px;"><input type="file" name="file" /></div>
+      <input type="hidden" name="username"/>
+      <input type="hidden" name="password"/>
+      <input type="hidden" name="parent" th:attr="value=${parent}"/>
+      <input type="text" name="title" placeholder="New Post" required/>
+      <div style="margin-top: 10px;"><input type="file" name="file"/></div>
       <button type="submit" class="primary" style="margin-top: 10px;">Post</button>
     </form>
   </div>
 
   <ul id="task_list"></ul>
-  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list" style="display:none;"></div>
+  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list"
+       style="display:none;"></div>
 </main>
 
 <script>
@@ -49,6 +51,7 @@
     form.username.value = localStorage.getItem("username");
     form.password.value = localStorage.getItem("password");
   }
+
   function likePost(button){
     const id = button.getAttribute('data-id');
       const likes = button.getAttribute('data-likes');
@@ -61,6 +64,7 @@
           button.setAttribute('data-likes', newLikes);
       });
   }
+
   function dislikePost(button){
     const id = button.getAttribute('data-id');
       const dislikes = button.getAttribute('data-dislikes');
@@ -73,6 +77,21 @@
           button.setAttribute('data-dislikes', newDislikes);
       });
   }
+
+  function deletePost(button) {
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+    const _id = button.getAttribute('data-_id');
+
+    fetch('/tasks/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&_id=${encodeURIComponent(_id)}`
+    })
+      .then(response => response.text());
+    }
 </script>
 </body>
 
