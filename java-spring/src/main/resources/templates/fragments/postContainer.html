@@ -1,0 +1,31 @@
+<div th:fragment="postContainer(item)" class="post-container" xmlns:th="http://www.thymeleaf.org">
+
+  <!-- Header -->
+  <div class="post-header">
+    <b class="post-author" th:text="${item.username}"></b>
+    <span class="post-date" th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+    <!-- Post text -->
+    <div class="post-text" th:text="${item.text}"></div>
+
+    <!-- Attachments -->
+    <div th:if="${item.attachment != null and item.attachment != ''}">
+      <img th:src="${item.attachment}" style="max-width: 100%; height: auto; border-radius: 8px; display: block;" />
+    </div>
+  </div>
+
+  <div class="reactions">
+    <!-- Like button -->
+    <button hx-post="/tasks/like" th:data-id="${item._id}" th:data-likes="${item.likes}" onclick="likePost(this)">Like</button>
+    <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
+
+    <!-- Dislike button -->
+    <button hx-post="/tasks/dislike" th:data-id="${item._id}" th:data-dislikes="${item.dislikes}" onclick="dislikePost(this)">Dislike</button>
+    <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
+
+    <!-- Delete button -->
+    <button th:data-_id="${item._id}" onclick="deletePost(this)">Delete</button>
+  </div>
+</div>

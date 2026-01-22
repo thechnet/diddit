@@ -55,6 +55,10 @@ main {
     align-items: center;
 }
 
+#parent_post:empty {
+  display: none
+}
+
 #form-section {
     display: flex;
     flex-direction: column;

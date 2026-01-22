@@ -138,10 +138,18 @@ public class TaskRestController {
     }
 
     @Nonnull
-    private String renderPostList(@Nonnull List<Post> tasks, String parent) {
+    private String renderPostList(@Nonnull List<Post> tasks, String parent_id) {
+        Post parent = null;
+        for (var task : tasks) {
+            if (task._id().equals(parent_id)) {
+                parent = task;
+                break;
+            }
+        }
         Context context = new Context();
         context.setVariable("tasks", tasks);
         context.setVariable("parent", parent);
+        context.setVariable("parent_id", parent_id);
         return templateEngine.process("fragments/postList", Set.of("taskListFrag"), context);
     }
 }
