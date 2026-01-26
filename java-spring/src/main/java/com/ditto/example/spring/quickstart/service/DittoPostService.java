@@ -96,10 +96,6 @@ public class DittoPostService {
 		}
 	}
 
-	public void addPost(@Nonnull String text, @Nonnull String username, @Nonnull String password, String attachmentPath) {
-		this.addReply(null, text, username, password, attachmentPath);
-	}
-
     public void addReply(String parentId, @Nonnull String text, @Nonnull String username, @Nonnull String password, String attachmentPath) {
 		listUsers();
 
@@ -156,7 +152,8 @@ public class DittoPostService {
         }
 		return newLikes;
     }
-    public int dislikePost(@Nonnull String id, @Nonnull int dislikes) {
+
+	public int dislikePost(@Nonnull String id, @Nonnull int dislikes) {
 
 		int newDislikes = dislikes + 1;
 		try {

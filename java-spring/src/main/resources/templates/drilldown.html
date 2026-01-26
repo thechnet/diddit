@@ -13,7 +13,7 @@
 <body>
 <main>
   <div id="header">
-    <div id="title">Drilldown</div>
+    <div id="title">Diddit</div>
   </div>
   <div id="sync-header">
     <span id="sync_state" hx-ext="sse" sse-connect="/ditto/sync/state" sse-swap="sync_state">
@@ -60,10 +60,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
-    }).then(response => response.text()).then(newLikes => {
-        document.getElementById('likes_count_' + id).textContent = newLikes;
-        button.setAttribute('data-likes', newLikes);
-    });
+    }).then(response => response.text()).then(newLikes => {});
     event.stopPropagation();
   }
 
@@ -75,10 +72,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
-    }).then(response => response.text()).then(newDislikes => {
-        document.getElementById('dislikes_count_' + id).textContent = newDislikes;
-        button.setAttribute('data-dislikes', newDislikes);
-    });
+    }).then(response => response.text()).then(newDislikes => {});
     event.stopPropagation();
   }
 
@@ -101,7 +95,7 @@
   }
 
   function drillInto(event) {
-    window.location.href = `/drilldown?parent=${event.currentTarget.getAttribute('data-_id')}`;
+    window.location.href = `/posts?parent=${event.currentTarget.getAttribute('data-_id')}`;
     event.stopPropagation();
   }
 </script>
