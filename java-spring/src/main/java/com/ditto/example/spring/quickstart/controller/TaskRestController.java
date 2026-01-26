@@ -72,6 +72,7 @@ public class TaskRestController {
     }
 
 	@PostMapping("/registerAccount")
+    @ResponseBody
 	public String registerAccount(@RequestParam("username") @Nonnull String username, @RequestParam("password") @Nonnull String password) {
 		taskService.registerAccount(username, password);
 		return "";
