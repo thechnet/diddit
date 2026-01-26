@@ -3,11 +3,14 @@ package com.ditto.example.spring.quickstart.controller;
 import com.ditto.example.spring.quickstart.service.DittoPostService;
 import com.ditto.example.spring.quickstart.service.Post;
 import jakarta.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
@@ -39,6 +42,31 @@ public class TaskRestController {
                 .event("post_list")
                 .build();
         });
+    }
+
+    @PostMapping("/tasks")
+    public String addTask(
+        @RequestParam("title") @Nonnull String title,
+        @RequestParam("username") @Nonnull String username,
+        @RequestParam("password") @Nonnull String password,
+        @RequestParam("parent") String parent,
+        @RequestParam(value = "file", required = false) MultipartFile file,
+        Model model
+    ) {
+        String attachmentBase64 = "";
+        if (file != null && !file.isEmpty()) {
+            try {
+                byte[] bytes = file.getBytes();
+                String base64 = Base64.getEncoder().encodeToString(bytes);
+                // Create the standard Data URI string
+                attachmentBase64 = "data:" + file.getContentType() + ";base64," + base64;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        taskService.addReply(parent, title, username, password, attachmentBase64);
+        return "";
     }
 
 	@PostMapping("/registerAccount")
