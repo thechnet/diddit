@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.scheduling.config.Task;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
@@ -20,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@RestController
+@Controller
 public class TaskRestController {
     @Nonnull
     private final DittoPostService taskService;
@@ -115,6 +117,18 @@ public class TaskRestController {
          taskService.deleteTask(username, password, post_id);
          return "";
      }
+
+    @GetMapping("/tasks/filter")
+    public String filterTasks(@RequestParam(required = false) String filter,
+                              Model model) {
+
+        List<Post> tasks = taskService.getTasksFiltered(filter);
+
+        Context context = new Context();
+        context.setVariable("tasks", tasks);
+        model.addAttribute("tasks", tasks);
+        return templateEngine.process("fragments/drilldown", Set.of("task_list"), context);
+    }
 
     @Nonnull
     private String renderPostList(@Nonnull List<Post> tasks, String parent_id) {

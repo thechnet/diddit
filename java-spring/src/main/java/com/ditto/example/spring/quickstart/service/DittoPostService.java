@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Component
 public class DittoPostService {
-    private static final String TASKS_COLLECTION_NAME = "tasks";
+    public static final String TASKS_COLLECTION_NAME = "tasks";
 	private static final String USERS_COLLECTION_NAME = "users";
 
     private final DittoService dittoService;
@@ -297,6 +297,66 @@ public class DittoPostService {
             }
         }, FluxSink.OverflowStrategy.LATEST);
     }
+	public List<Post> getTasksFiltered(String filter) {
+
+		String orderBy;
+		switch (filter) {
+			case "time_asc":
+				orderBy = "time ASC";
+				break;
+			case "likes_desc":
+				orderBy = "likes DESC";
+				break;
+			case "likes_asc":
+				orderBy = "likes ASC";
+				break;
+			case "time_desc":
+			default:
+				orderBy = "time DESC";
+				break;
+		}
+
+		String tasksQuery =
+				"SELECT * FROM %s ORDER BY %s"
+						.formatted(TASKS_COLLECTION_NAME, orderBy);
+
+		String usersQuery =
+				"SELECT * FROM %s".formatted(USERS_COLLECTION_NAME);
+
+		try {
+			var taskResults = dittoService.getDitto()
+					.getStore()
+					.execute(tasksQuery)
+					.toCompletableFuture()
+					.join()
+					.getItems();
+
+			var userResults = dittoService.getDitto()
+					.getStore()
+					.execute(usersQuery)
+					.toCompletableFuture()
+					.join()
+					.getItems();
+
+			var userMap = userResults.stream()
+					.map(DittoQueryResultItem::getValue)
+					.collect(java.util.stream.Collectors.toMap(
+							u -> u.get("_id").getString(),
+							u -> u.get("username").getString(),
+							(u1, u2) -> u1
+					));
+
+			return taskResults.stream().map(item -> {
+				var value = item.getValue();
+				String authorId = value.get("author_id").getString();
+				String username = userMap.getOrDefault(authorId, "Unknown");
+				return itemToPost(value, username);
+			}).toList();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
     private Post itemToPost(@Nonnull DittoCborSerializable.Dictionary value, String username) {
         return new Post(
