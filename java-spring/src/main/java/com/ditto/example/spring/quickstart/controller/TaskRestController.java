@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller
+@RestController
 public class TaskRestController {
     @Nonnull
     private final DittoPostService taskService;
@@ -123,12 +123,17 @@ public class TaskRestController {
     public String filterTasks(@RequestParam(required = false) String filter,
                               Model model) {
 
+        if (filter == null || filter.isEmpty()) {
+            return ""; // Leer wenn SSE aktiv ist
+        }
         List<Post> tasks = taskService.getTasksFiltered(filter);
 
         Context context = new Context();
         context.setVariable("tasks", tasks);
-        model.addAttribute("tasks", tasks);
-        return templateEngine.process("fragments/drilldown", Set.of("task_list"), context);
+        logger.info("Found {} tasks", tasks.size());
+        context.setVariable("parent", "");
+        // Manually render and return the HTML
+        return templateEngine.process("fragments/postList", Set.of("taskListContent"), context);
     }
 
     @Nonnull

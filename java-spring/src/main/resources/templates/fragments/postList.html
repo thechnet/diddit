@@ -9,4 +9,11 @@
       </div>
     </div>
   </ul>
+  <th:block th:fragment="taskListContent">
+    <div th:each="item : ${tasks}">
+      <div th:if="${item.parent() == ''}" class="post">
+        <div th:replace="~{fragments/postContainer :: postContainer(${item})}"></div>
+      </div>
+    </div>
+  </th:block>
 </th:block>

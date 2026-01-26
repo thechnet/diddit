@@ -46,7 +46,8 @@
             hx-get="/tasks/filter"
             hx-trigger="change"
             hx-target="#task_list"
-            hx-swap="innerHTML">
+            hx-swap="innerHTML"
+            onchange="if(this.value === '') document.getElementById('sse-container').style.display='block'; else document.getElementById('sse-container').style.display='none';">
       <option value="">Filter by</option>
       <option value="time_desc">Newest first</option>
       <option value="time_asc">Oldest first</option>
@@ -57,7 +58,9 @@
 
   <ul id="task_list"></ul>
 
-  <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list" style="display:none;"></div>
+  <div id="sse-container">
+    <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list" style="display:none;"></div>
+  </div>
 </main>
 
 <script>
