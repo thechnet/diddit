@@ -298,17 +298,17 @@ public class DittoPostService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 	public List<Post> getTasksFiltered(String filter) {
-
+		
 		String orderBy;
 		switch (filter) {
 			case "time_asc":
 				orderBy = "time ASC";
 				break;
 			case "likes_desc":
-				orderBy = "likes DESC";
+				orderBy = "likes - dislikes DESC";
 				break;
 			case "likes_asc":
-				orderBy = "likes ASC";
+				orderBy = "likes - dislikes ASC";
 				break;
 			case "time_desc":
 			default:
