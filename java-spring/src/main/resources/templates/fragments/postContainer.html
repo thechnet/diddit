@@ -12,8 +12,16 @@
 
     <!-- Attachments -->
     <div th:if="${item.attachment != null and item.attachment != ''}">
-      <img th:src="${item.attachment}" style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />
+    
+    <div th:if="${#strings.contains(item.attachment, 'data:image')}">
+        <img th:src="${item.attachment}" 
+             style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />
     </div>
+
+    <div th:unless="${#strings.contains(item.attachment, 'data:image')}">
+        <a th:href="${item.attachment}" download="attachment">Download File</a>
+    </div>
+  </div>
   </div>
 
   <div class="reactions">
