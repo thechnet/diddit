@@ -12,25 +12,25 @@ import reactor.core.publisher.Flux;
 @RestController
 public class DittoConfigRestController {
 
-    private final DittoService dittoService;
+	private final DittoService dittoService;
 
-    public DittoConfigRestController(final DittoService dittoService) {
-        this.dittoService = dittoService;
-    }
+	public DittoConfigRestController(final DittoService dittoService) {
+		this.dittoService = dittoService;
+	}
 
-    @PostMapping("/ditto/sync/toggle")
-    public String toggleSync() {
-        dittoService.toggleSync();
-        return "";
-    }
+	@PostMapping("/ditto/sync/toggle")
+	public String toggleSync() {
+		dittoService.toggleSync();
+		return "";
+	}
 
-    @GetMapping(path = "/ditto/sync/state", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @ResponseBody
-    public Flux<ServerSentEvent<String>> syncState() {
-        return dittoService.getSyncState()
-                .map(syncState -> ServerSentEvent.builder("Sync State: %s".formatted(syncState))
-                    .event("sync_state")
-                    .build()
-                );
-    }
+	@GetMapping(path = "/ditto/sync/state", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@ResponseBody
+	public Flux<ServerSentEvent<String>> syncState() {
+		return dittoService.getSyncState()
+			.map(syncState -> ServerSentEvent.builder("Sync State: %s".formatted(syncState))
+				.event("sync_state")
+				.build()
+			);
+	}
 }

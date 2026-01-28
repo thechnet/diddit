@@ -1,9 +1,11 @@
-<div th:fragment="postContainer(item)" class="post-container" xmlns:th="http://www.thymeleaf.org" th:data-_id="${item._id}" onclick="drillInto(event)">
+<div class="post-container" onclick="drillInto(event)" th:data-_id="${item._id}"
+     th:fragment="postContainer(item)" xmlns:th="http://www.thymeleaf.org">
 
   <!-- Header -->
   <div class="post-header">
     <b class="post-author" th:text="${item.username}"></b>
-    <span class="post-date" th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
+    <span class="post-date"
+          th:text="${#dates.format(new java.util.Date(item.time * 1000L), 'dd.MM.yyyy HH:mm')}"></span>
   </div>
 
   <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
@@ -12,28 +14,34 @@
 
     <!-- Attachments -->
     <div th:if="${item.attachment != null and item.attachment != ''}">
-    
-    <div th:if="${#strings.contains(item.attachment, 'data:image')}">
-        <img th:src="${item.attachment}" 
-             style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />
-    </div>
 
-    <div th:unless="${#strings.contains(item.attachment, 'data:image')}">
-        <a th:href="${item.attachment}" download="attachment">Download File</a>
+      <div th:if="${#strings.contains(item.attachment, 'data:image')}">
+        <img style="max-width: 50%; height: auto; border-radius: 8px; display: block;"
+             th:src="${item.attachment}"/>
+      </div>
+
+      <div th:unless="${#strings.contains(item.attachment, 'data:image')}">
+        <a download="attachment" th:href="${item.attachment}">Download File</a>
+      </div>
     </div>
-  </div>
   </div>
 
   <div class="reactions">
     <!-- Like button -->
-    <button hx-post="/tasks/like" th:data-id="${item._id}" th:data-likes="${item.likes}" onclick="likePost(event)">Like</button>
+    <button hx-post="/tasks/like" onclick="likePost(event)" onsubmit="addCredentials(this)"
+            th:data-likes="${item.likes}" th:data-post_id="${item._id}">Like
+    </button>
     <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
 
     <!-- Dislike button -->
-    <button hx-post="/tasks/dislike" th:data-id="${item._id}" th:data-dislikes="${item.dislikes}" onclick="dislikePost(event)">Dislike</button>
+    <button hx-post="/tasks/dislike" onclick="dislikePost(event)" onsubmit="addCredentials(this)"
+            th:data-dislikes="${item.dislikes}" th:data-post_id="${item._id}">Dislike
+    </button>
     <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
 
     <!-- Delete button -->
-    <button th:data-_id="${item._id}" onclick="deletePost(event)">Delete</button>
+    <button onclick="deletePost(event)" onsubmit="addCredentials(this)"
+            th:data-post_id="${item._id}">Delete
+    </button>
   </div>
 </div>

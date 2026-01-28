@@ -1,17 +1,17 @@
 <th:block th:fragment="taskListFrag(tasks)">
-  <div id="parent_post" th:if="${parent != null}" hx-swap-oob="true">
+  <div hx-swap-oob="true" id="parent_post" th:if="${parent != null}">
     <div th:replace="~{fragments/postContainer :: postContainer(${parent})}"></div>
   </div>
-  <ul id="task_list" hx-swap-oob="true">
+  <ul hx-swap-oob="true" id="task_list">
     <div th:each="item : ${tasks}">
-      <div th:if="${item.parent == parent_id}" class="post">
+      <div class="post" th:if="${item.parent == parent_id}">
         <div th:replace="~{fragments/postContainer :: postContainer(${item})}"></div>
       </div>
     </div>
   </ul>
   <th:block th:fragment="taskListContent">
     <div th:each="item : ${tasks}">
-      <div th:if="${item.parent() == ''}" class="post">
+      <div class="post" th:if="${item.parent() == ''}">
         <div th:replace="~{fragments/postContainer :: postContainer(${item})}"></div>
       </div>
     </div>

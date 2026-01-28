@@ -1,8 +1,8 @@
 package com.ditto.example.spring.quickstart;
 
+import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.util.Base64;
 
 public class Hash {
 

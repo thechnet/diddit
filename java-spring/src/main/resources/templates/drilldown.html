@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en" xmlns:hx-on="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/reset-css@5.0.2/reset.css"/>
-  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link href="https://unpkg.com/reset-css@5.0.2/reset.css" rel="stylesheet" type="text/css"/>
+  <link href="style.css" rel="stylesheet" type="text/css"/>
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
 </head>
@@ -16,10 +16,10 @@
     <div id="title">Diddit</div>
   </div>
   <div id="sync-header">
-    <span id="sync_state" hx-ext="sse" sse-connect="/ditto/sync/state" sse-swap="sync_state">
+    <span hx-ext="sse" id="sync_state" sse-connect="/ditto/sync/state" sse-swap="sync_state">
         Sync State: True
     </span>
-    <button type="button" hx-post="/ditto/sync/toggle" hx-swap="none">
+    <button hx-post="/ditto/sync/toggle" hx-swap="none" type="button">
       Toggle
     </button>
   </div>
@@ -27,26 +27,26 @@
   <div id="parent_post"></div>
 
   <div id="form-section">
-    <form hx-post="/tasks"
-          hx-encoding="multipart/form-data"
-          hx-swap="none"
+    <form hx-encoding="multipart/form-data"
           hx-on::after-request="if(event.detail.successful) this.reset()"
+          hx-post="/tasks"
+          hx-swap="none"
           onsubmit="addCredentials(this)">
-      <input type="hidden" name="username"/>
-      <input type="hidden" name="password"/>
-      <input type="hidden" name="parent" th:attr="value=${parent}"/>
-      <input type="text" name="title" placeholder="New Post" required/>
-      <div style="margin-top: 10px;"><input type="file" name="file"/></div>
-      <button type="submit" class="primary" style="margin-top: 10px;">Post</button>
+      <input name="username" type="hidden"/>
+      <input name="password" type="hidden"/>
+      <input name="parent" th:attr="value=${parent}" type="hidden"/>
+      <input name="title" placeholder="New Post" required type="text"/>
+      <div style="margin-top: 10px;"><input name="file" type="file"/></div>
+      <button class="primary" style="margin-top: 10px;" type="submit">Post</button>
     </form>
   </div>
 
   <div id="filter-button">
-    <select name="filter"
-            hx-get="/tasks/filter"
-            hx-trigger="change"
-            hx-target="#task_list"
+    <select hx-get="/tasks/filter"
             hx-swap="innerHTML"
+            hx-target="#task_list"
+            hx-trigger="change"
+            name="filter"
             onchange="if(this.value === '') document.getElementById('sse-container').style.display='block'; else document.getElementById('sse-container').style.display='none';">
       <option value="">Filter by</option>
       <option value="time_desc">Newest first</option>
@@ -59,63 +59,12 @@
   <ul id="task_list"></ul>
 
   <div id="sse-container">
-    <div hx-ext="sse" th:attr="sse-connect=@{/posts/stream(parent=${parent})}" sse-swap="post_list" style="display:none;"></div>
+    <div hx-ext="sse" sse-swap="post_list" style="display:none;"
+         th:attr="sse-connect=@{/posts/stream(parent=${parent})}"></div>
   </div>
 </main>
 
-<script>
-  function addCredentials(form) {
-    form.username.value = localStorage.getItem("username");
-    form.password.value = localStorage.getItem("password");
-  }
-
-  function likePost(event){
-    const button = event.currentTarget;
-    const id = button.getAttribute('data-id');
-    const likes = button.getAttribute('data-likes');
-    fetch('/tasks/like', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${encodeURIComponent(id)}&likes=${encodeURIComponent(likes)}`
-    }).then(response => response.text()).then(newLikes => {});
-    event.stopPropagation();
-  }
-
-  function dislikePost(event){
-    const button = event.currentTarget;
-    const id = button.getAttribute('data-id');
-    const dislikes = button.getAttribute('data-dislikes');
-    fetch('/tasks/dislike', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${encodeURIComponent(id)}&dislikes=${encodeURIComponent(dislikes)}`
-    }).then(response => response.text()).then(newDislikes => {});
-    event.stopPropagation();
-  }
-
-  function deletePost(event) {
-    const button = event.currentTarget;
-    const username = localStorage.getItem("username");
-    const password = localStorage.getItem("password");
-    const _id = button.getAttribute('data-_id');
-
-    fetch('/tasks/delete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&_id=${encodeURIComponent(_id)}`
-    })
-      .then(response => response.text());
-
-    event.stopPropagation();
-  }
-
-  function drillInto(event) {
-    window.location.href = `/posts?parent=${event.currentTarget.getAttribute('data-_id')}`;
-    event.stopPropagation();
-  }
-</script>
+<script src="drilldown.js"></script>
 </body>
 
 </html>
