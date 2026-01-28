@@ -28,19 +28,21 @@
 
   <div class="reactions">
     <!-- Like button -->
-    <button hx-post="/tasks/like" onclick="likePost(event)" onsubmit="addCredentials(this)"
+    <button onclick="likePost(event)"
             th:data-likes="${item.likes}" th:data-post_id="${item._id}">Like
     </button>
-    <span id="likes_count_${item._id}" th:text="${item.likes}"></span>
+    <span
+        th:text="${(item.likes == null || item.likes.trim().length() == 0) ? 0 : item.likes.trim().split(' +').length}"></span>
 
     <!-- Dislike button -->
-    <button hx-post="/tasks/dislike" onclick="dislikePost(event)" onsubmit="addCredentials(this)"
+    <button onclick="dislikePost(event)"
             th:data-dislikes="${item.dislikes}" th:data-post_id="${item._id}">Dislike
     </button>
-    <span id="dislikes_count_${item._id}" th:text="${item.dislikes}"></span>
+    <span
+        th:text="${(item.dislikes == null || item.dislikes.trim().length() == 0) ? 0 : item.dislikes.trim().split(' +').length}"></span>
 
     <!-- Delete button -->
-    <button onclick="deletePost(event)" onsubmit="addCredentials(this)"
+    <button onclick="deletePost(event)"
             th:data-post_id="${item._id}">Delete
     </button>
   </div>

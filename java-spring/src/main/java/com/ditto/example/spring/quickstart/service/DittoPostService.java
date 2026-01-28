@@ -9,10 +9,13 @@ import com.ditto.java.DittoSyncSubscription;
 import com.ditto.java.serialization.DittoCborSerializable;
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -166,18 +169,29 @@ public class DittoPostService {
 			DittoCborSerializable.Dictionary post = results.get(0).getValue();
 			String user_ids = post.get(column_name).getString();
 
+			Set<String> raters = Arrays.stream(user_ids.split(" +"))
+				.filter(s -> !s.isEmpty())
+				.collect(Collectors.toSet());
+			String user_id = user.get("_id").getString();
+			if (raters.contains(user_id)) {
+				raters.remove(user_id);
+			} else {
+				raters.add(user_id);
+			}
+
 			dittoService.getDitto().getStore().execute(
-				"UPDATE %s SET likes = :likes WHERE _id = :_id".formatted(TASKS_COLLECTION_NAME),
+				"UPDATE %s SET %s = :%s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME,
+					column_name, column_name),
 				DittoCborSerializable.Dictionary.buildDictionary()
-					.put(column_name, user_ids + " " + user.get("_id").getString())
-					.put("_id", post_id)
+					.put(column_name, String.join(" ", raters))
+					.put("post_id", post_id)
 					.build()
 			).toCompletableFuture().join();
+
+			return String.valueOf(raters.size());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-		return "";
 	}
 
 	public String likePost(@Nonnull String username, @Nonnull String password,
@@ -250,7 +264,9 @@ public class DittoPostService {
 			List<String> author_ids = result.getItems().stream()
 				.map(item -> item.getValue().get("author_id").getString())
 				.toList();
-			assert author_ids.size() == 1;
+			if (author_ids.size() != 1) {
+				return;
+			}
 
 			var author_id = author_ids.get(0);
 

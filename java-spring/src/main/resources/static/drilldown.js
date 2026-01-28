@@ -11,7 +11,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `post_id=${encodeURIComponent(post_id)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-    }).then(response => response.text()).then(x => {});
+    });
   }
 
   function likePost(event) {
