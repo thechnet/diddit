@@ -101,6 +101,12 @@ img.logo {
     padding: 1rem;
 }
 
+#post-form textarea {
+    width: 100%;
+    min-height: 60px;
+    resize: vertical;
+}
+
 #list-section {
     display: flex;
     flex-direction: column;
@@ -180,6 +186,10 @@ ul .post-container:hover {
 .post-date,
 .reply-date {
     color: var(--color-text-secondary);
+}
+
+.post-text {
+    white-space: pre-wrap;
 }
 
 button {
