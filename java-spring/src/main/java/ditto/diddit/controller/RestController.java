@@ -84,8 +84,7 @@ public class RestController {
 	@ResponseBody
 	public String registerAccount(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password) {
-		didditService.registerAccount(username, password);
-		return "";
+		return String.valueOf(didditService.registerAccount(username, password));
 	}
 
 	@PostMapping("/posts/reply")
@@ -151,6 +150,24 @@ public class RestController {
 		// Manually render and return the HTML
 		return templateEngine.process("fragments/postList", Set.of("postListContent"), context);
 	}
+
+	@PostMapping("/authenticate")
+	@ResponseBody
+	public String authenticate(@RequestParam("username") @Nonnull String username,
+		@RequestParam("password") @Nonnull String password) {
+		var userOrEmpty = didditService.getUserByUsername(username);
+
+		if (userOrEmpty.isEmpty()) {
+			return "false";
+		}
+
+		if (!didditService.authenticate(userOrEmpty.get(), password)) {
+			return "false";
+		}
+
+		return "true";
+	}
+
 
 	@Nonnull
 	private String renderPostList(@Nonnull List<Post> posts, String parent_id) {

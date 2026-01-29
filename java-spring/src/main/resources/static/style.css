@@ -58,17 +58,7 @@ img.logo {
   width: 150px;
 }
 
-#sync-header {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-#parent_post:empty {
-  display: none
-}
-
-#form-section {
+#credentials-form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -77,19 +67,38 @@ img.logo {
     padding: 1rem;
 }
 
-#form-section h3 {
+#credentials-form h3 {
     font-weight: 500;
     font-size: 1.1rem;
 }
 
-#form-section form {
+#credentials-form form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-#form-section input[name='title'] {
-    height: 5rem;
+#sync-header {
+    display: none;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#account #username {
+    font-style: italic;
+}
+
+#parent_post:empty {
+  display: none
+}
+
+#post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 1px solid currentColor;
+    border-radius: 1rem;
+    padding: 1rem;
 }
 
 #list-section {

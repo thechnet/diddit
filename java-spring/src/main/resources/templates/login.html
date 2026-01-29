@@ -7,9 +7,11 @@
   <title>Ditto Spring Posts Quickstart</title>
   <link href="https://unpkg.com/reset-css@5.0.2/reset.css" rel="stylesheet" type="text/css"/>
   <link href="style.css" rel="stylesheet" type="text/css"/>
-  <!-- <link rel="icon" type="image/jpg" href="index.jpg"/> -->
+  <link href="logo-black.png" rel="icon" type="image/png"/>
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
+  <script src="script.js"></script>
+  <script>redirectToPostsIfCredentialsPresent();</script>
 </head>
 
 <body>
@@ -17,7 +19,7 @@
   <div id="header">
     <img class="logo">
   </div>
-  <div id="form-section">
+  <div id="credentials-form">
     <h3>Sign in to Diddit</h3>
     <form id="login-form">
       <input id="username" placeholder="Username" required type="text"/>
@@ -25,17 +27,24 @@
       <button class="primary" type="submit">Sign in</button>
     </form>
   </div>
-  <div id="new-to-diddit">
+  <div id="hint">
     <span>New to Diddit?</span>
     <a href="/register">Create an account</a>
   </div>
 </main>
 <script>
-  document.getElementById('login-form').addEventListener('submit', function (event) {
+  document.getElementById('login-form').addEventListener('submit', async function (event) {
     event.preventDefault();
+
     localStorage.setItem('username', document.getElementById('username').value);
     localStorage.setItem('password', document.getElementById('password').value);
-    window.location.href = '/posts';
+
+    if (!(await credentialsValid())) {
+     alert("Incorrect username or password.");
+     return;
+    }
+
+    redirectToPostsIfCredentialsPresent();
   });
 </script>
 </body>

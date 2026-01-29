@@ -1,13 +1,13 @@
 package ditto.diddit.service;
 
-import ditto.diddit.Hash;
-import ditto.diddit.Post;
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResultItem;
 import com.ditto.java.DittoStoreObserver;
 import com.ditto.java.DittoSyncSubscription;
 import com.ditto.java.serialization.DittoCborSerializable;
+import ditto.diddit.Hash;
+import ditto.diddit.Post;
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,21 +19,33 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 @Component
-public class DidditService {
+public class DidditService implements DisposableBean {
 
 	public static final String POSTS_COLLECTION_NAME = "posts";
 	private static final String USERS_COLLECTION_NAME = "users";
 
 	private final DittoService dittoService;
+	private final DittoSyncSubscription usersSubscription;
 	private final Logger logger = LoggerFactory.getLogger(DidditService.class);
 
 	public DidditService(DittoService dittoService) {
 		this.dittoService = dittoService;
+		try {
+			this.usersSubscription = dittoService.getDitto().getSync().registerSubscription("SELECT * FROM " + USERS_COLLECTION_NAME);
+		} catch (DittoError e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		usersSubscription.close();
 	}
 
 	public void listUsers() {
@@ -83,10 +95,17 @@ public class DidditService {
 		}
 	}
 
-	public void registerAccount(@Nonnull String username, @Nonnull String password) {
+	public boolean registerAccount(@Nonnull String username, @Nonnull String password) {
+		getUserByUsername(
+			username); /* For some reason the first time this runs it always claims the user does not exist. */
+		if (getUserByUsername(username).isPresent()) {
+			logger.info("\033[104muser exists\033[0m");
+			return false;
+		}
+		logger.info("\033[104muser does not exist\033[0m {}", username);
+
 		final String user_id = UUID.randomUUID().toString();
 
-		// TODO: avoid collisions
 		try {
 			dittoService.getDitto().getStore().execute(
 				"INSERT INTO %s DOCUMENTS (:user)".formatted(USERS_COLLECTION_NAME),
@@ -104,6 +123,8 @@ public class DidditService {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		return true;
 	}
 
 	public void addReply(String parentId, @Nonnull String text, @Nonnull String username,
