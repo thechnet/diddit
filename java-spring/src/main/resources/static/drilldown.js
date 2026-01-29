@@ -15,17 +15,17 @@
   }
 
   function likePost(event) {
-    interact(event.currentTarget, '/tasks/like');
+    interact(event.currentTarget, '/posts/like');
     event.stopPropagation();
   }
 
   function dislikePost(event) {
-    interact(event.currentTarget, '/tasks/dislike');
+    interact(event.currentTarget, '/posts/dislike');
     event.stopPropagation();
   }
 
   function deletePost(event) {
-    interact(event.currentTarget, '/tasks/delete');
+    interact(event.currentTarget, '/posts/delete');
     event.stopPropagation();
   }
 

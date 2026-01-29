@@ -16,9 +16,9 @@
     <div id="title">Diddit</div>
   </div>
   <div id="sync-header">
-    <span hx-ext="sse" id="sync_state" sse-connect="/ditto/sync/state" sse-swap="sync_state">
+      <span hx-ext="sse" id="sync_state" sse-connect="/ditto/sync/state" sse-swap="sync_state">
         Sync State: True
-    </span>
+      </span>
     <button hx-post="/ditto/sync/toggle" hx-swap="none" type="button">
       Toggle
     </button>
@@ -29,9 +29,7 @@
   <div id="form-section">
     <form hx-encoding="multipart/form-data"
           hx-on::after-request="if(event.detail.successful) this.reset()"
-          hx-post="/tasks"
-          hx-swap="none"
-          onsubmit="addCredentials(this)">
+          hx-post="/posts" hx-swap="none" onsubmit="addCredentials(this)">
       <input name="username" type="hidden"/>
       <input name="password" type="hidden"/>
       <input name="parent" th:attr="value=${parent}" type="hidden"/>
@@ -42,11 +40,8 @@
   </div>
 
   <div id="filter-button">
-    <select hx-get="/tasks/filter"
-            hx-swap="innerHTML"
-            hx-target="#task_list"
-            hx-trigger="change"
-            name="filter"
+    <select hx-get="/posts/filter" hx-swap="innerHTML" hx-target="#post_list" hx-trigger="change"
+            id="filter" name="filter"
             onchange="if(this.value === '') document.getElementById('sse-container').style.display='block'; else document.getElementById('sse-container').style.display='none';">
       <option value="">Filter by</option>
       <option value="time_desc">Newest first</option>
@@ -56,7 +51,7 @@
     </select>
   </div>
 
-  <ul id="task_list"></ul>
+  <ul id="post_list"></ul>
 
   <div id="sse-container">
     <div hx-ext="sse" sse-swap="post_list" style="display:none;"

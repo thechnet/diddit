@@ -1,9 +1,6 @@
 package com.ditto.example.spring.quickstart.controller;
 
-import com.ditto.example.spring.quickstart.service.DittoPostService;
-import jakarta.annotation.Nonnull;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,15 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class TaskContentController {
+public class SiteController {
 
-	@Nonnull
-	private final DittoPostService taskService;
+	private final Logger logger = LoggerFactory.getLogger(SiteController.class);
 
-	private final Logger logger = LoggerFactory.getLogger(TaskContentController.class);
-
-	public TaskContentController(@NotNull final DittoPostService taskService) {
-		this.taskService = taskService;
+	public SiteController() {
 	}
 
 	@GetMapping("/")

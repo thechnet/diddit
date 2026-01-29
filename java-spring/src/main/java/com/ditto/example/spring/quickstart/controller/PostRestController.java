@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -24,34 +25,34 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
 
 @RestController
-public class TaskRestController {
+public class PostRestController {
 
 	@Nonnull
-	private final DittoPostService taskService;
+	private final DittoPostService postService;
 	@Nonnull
 	private final SpringTemplateEngine templateEngine;
 
-	private final Logger logger = LoggerFactory.getLogger(TaskRestController.class);
+	private final Logger logger = LoggerFactory.getLogger(PostRestController.class);
 
-	public TaskRestController(final DittoPostService taskService,
-		final SpringTemplateEngine templateEngine) {
-		this.taskService = taskService;
+	public PostRestController(@NotNull final DittoPostService postService,
+		@NotNull final SpringTemplateEngine templateEngine) {
+		this.postService = postService;
 		this.templateEngine = templateEngine;
 	}
 
 	@GetMapping(value = "/posts/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<ServerSentEvent<String>> streamPosts(
 		@RequestParam(name = "parent", required = false) String parent) {
-		return taskService.observeAll().map(tasks -> {
-			String htmlFragment = renderPostList(tasks, parent);
+		return postService.observeAll().map(posts -> {
+			String htmlFragment = renderPostList(posts, parent);
 			return ServerSentEvent.builder(htmlFragment)
 				.event("post_list")
 				.build();
 		});
 	}
 
-	@PostMapping("/tasks")
-	public String addTask(
+	@PostMapping("/posts")
+	public String addPost(
 		@RequestParam("title") @Nonnull String title,
 		@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
@@ -65,15 +66,18 @@ public class TaskRestController {
 				byte[] bytes = file.getBytes();
 				String base64 = Base64.getEncoder().encodeToString(bytes);
 				// Create the standard Data URI string
-                String originalName = file.getOriginalFilename();
-                if (originalName == null || originalName.isEmpty()) originalName = "file";
-				attachmentBase64 = originalName + ":::" + "data:" + file.getContentType() + ";base64," + base64;
+				String originalName = file.getOriginalFilename();
+				if (originalName == null || originalName.isEmpty()) {
+					originalName = "file";
+				}
+				attachmentBase64 =
+					originalName + ":::" + "data:" + file.getContentType() + ";base64," + base64;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		taskService.addReply(parent, title, username, password, attachmentBase64);
+		postService.addReply(parent, title, username, password, attachmentBase64);
 		return "";
 	}
 
@@ -81,16 +85,16 @@ public class TaskRestController {
 	@ResponseBody
 	public String registerAccount(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password) {
-		taskService.registerAccount(username, password);
+		postService.registerAccount(username, password);
 		return "";
 	}
 
-	@PostMapping("/tasks/reply")
+	@PostMapping("/posts/reply")
 	public String postReply(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
 		@RequestParam("text") @Nonnull String text, @RequestParam("_id") @Nonnull String _id,
 		Model model) {
-		taskService.addReply(_id, text, username, password, "");
+		postService.addReply(_id, text, username, password, "");
 		Post reply = new Post(
 			UUID.randomUUID().toString(),
 			_id,
@@ -106,62 +110,62 @@ public class TaskRestController {
 		return "";
 	}
 
-	@PostMapping("/tasks/like")
+	@PostMapping("/posts/like")
 	@ResponseBody
 	public String likePost(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
 		@RequestParam("post_id") @Nonnull String post_id) {
-		return taskService.likePost(username, password, post_id);
+		return postService.likePost(username, password, post_id);
 	}
 
-	@PostMapping("/tasks/dislike")
+	@PostMapping("/posts/dislike")
 	@ResponseBody
-	public String dislikeTask(@RequestParam("username") @Nonnull String username,
+	public String dislikePost(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
 		@RequestParam("post_id") @Nonnull String post_id) {
-		taskService.dislikePost(username, password, post_id);
+		postService.dislikePost(username, password, post_id);
 		return "";
 	}
 
-	@PostMapping("/tasks/delete")
+	@PostMapping("/posts/delete")
 	@ResponseBody
-	public String deleteTask(@RequestParam("username") @Nonnull String username,
+	public String deletePost(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
 		@RequestParam("post_id") @Nonnull String post_id) {
-		taskService.deleteTask(username, password, post_id);
+		postService.deletePost(username, password, post_id);
 		return "";
 	}
 
-	@GetMapping("/tasks/filter")
-	public String filterTasks(@RequestParam(required = false) String filter,
+	@GetMapping("/posts/filter")
+	public String filterPosts(@RequestParam(required = false) String filter,
 		Model model) {
 
 		if (filter == null || filter.isEmpty()) {
 			return ""; // Leer wenn SSE aktiv ist
 		}
-		List<Post> tasks = taskService.getTasksFiltered(filter);
+		List<Post> posts = postService.getPostsFiltered(filter);
 
 		Context context = new Context();
-		context.setVariable("tasks", tasks);
-		logger.info("Found {} tasks", tasks.size());
+		context.setVariable("posts", posts);
+		logger.info("Found {} posts", posts.size());
 		context.setVariable("parent", "");
 		// Manually render and return the HTML
-		return templateEngine.process("fragments/postList", Set.of("taskListContent"), context);
+		return templateEngine.process("fragments/postList", Set.of("postListContent"), context);
 	}
 
 	@Nonnull
-	private String renderPostList(@Nonnull List<Post> tasks, String parent_id) {
+	private String renderPostList(@Nonnull List<Post> posts, String parent_id) {
 		Post parent = null;
-		for (var task : tasks) {
-			if (task._id().equals(parent_id)) {
-				parent = task;
+		for (var post : posts) {
+			if (post._id().equals(parent_id)) {
+				parent = post;
 				break;
 			}
 		}
 		Context context = new Context();
-		context.setVariable("tasks", tasks);
+		context.setVariable("posts", posts);
 		context.setVariable("parent", parent);
 		context.setVariable("parent_id", parent_id);
-		return templateEngine.process("fragments/postList", Set.of("taskListFrag"), context);
+		return templateEngine.process("fragments/postList", Set.of("postListFrag"), context);
 	}
 }

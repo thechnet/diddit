@@ -25,7 +25,7 @@ import reactor.core.publisher.FluxSink;
 @Component
 public class DittoPostService {
 
-	public static final String TASKS_COLLECTION_NAME = "tasks";
+	public static final String POSTS_COLLECTION_NAME = "posts";
 	private static final String USERS_COLLECTION_NAME = "users";
 
 	private final DittoService dittoService;
@@ -123,7 +123,7 @@ public class DittoPostService {
 
 		try {
 			dittoService.getDitto().getStore().execute(
-				"INSERT INTO %s DOCUMENTS (:reply)".formatted(TASKS_COLLECTION_NAME),
+				"INSERT INTO %s DOCUMENTS (:reply)".formatted(POSTS_COLLECTION_NAME),
 				DittoCborSerializable.Dictionary.buildDictionary()
 					.put(
 						"reply",
@@ -158,7 +158,7 @@ public class DittoPostService {
 		try {
 			List<? extends DittoQueryResultItem> results = dittoService.getDitto().getStore()
 				.execute(
-					"SELECT * FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+					"SELECT * FROM %s WHERE _id = :post_id".formatted(POSTS_COLLECTION_NAME),
 					DittoCborSerializable.Dictionary.buildDictionary()
 						.put("post_id", post_id)
 						.build()
@@ -180,7 +180,7 @@ public class DittoPostService {
 			}
 
 			dittoService.getDitto().getStore().execute(
-				"UPDATE %s SET %s = :%s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME,
+				"UPDATE %s SET %s = :%s WHERE _id = :post_id".formatted(POSTS_COLLECTION_NAME,
 					column_name, column_name),
 				DittoCborSerializable.Dictionary.buildDictionary()
 					.put(column_name, String.join(" ", raters))
@@ -204,11 +204,11 @@ public class DittoPostService {
 		return this.ratePost(username, password, "dislikes", post_id);
 	}
 
-	private void _deleteTask(@Nonnull String post_id) {
+	private void _deletePost(@Nonnull String post_id) {
 		/* Delete all my children. */
 		try {
 			var result = dittoService.getDitto().getStore().execute(
-				"SELECT * FROM %s WHERE parent = :post_id".formatted(TASKS_COLLECTION_NAME),
+				"SELECT * FROM %s WHERE parent = :post_id".formatted(POSTS_COLLECTION_NAME),
 				DittoCborSerializable.Dictionary.buildDictionary()
 					.put("post_id", post_id)
 					.build()
@@ -219,7 +219,7 @@ public class DittoPostService {
 				.toList();
 
 			for (var child_id : child_ids) {
-				this._deleteTask(child_id);
+				this._deletePost(child_id);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -228,7 +228,7 @@ public class DittoPostService {
 		/* Delete myself. */
 		try {
 			dittoService.getDitto().getStore().execute(
-				"DELETE FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+				"DELETE FROM %s WHERE _id = :post_id".formatted(POSTS_COLLECTION_NAME),
 				DittoCborSerializable.Dictionary.buildDictionary()
 					.put("post_id", post_id)
 					.build()
@@ -238,7 +238,7 @@ public class DittoPostService {
 		}
 	}
 
-	public void deleteTask(@Nonnull String username, @Nonnull String password,
+	public void deletePost(@Nonnull String username, @Nonnull String password,
 		@Nonnull String post_id) {
 		var userOrEmpty = getUserByUsername(username);
 		if (userOrEmpty.isEmpty()) {
@@ -255,7 +255,7 @@ public class DittoPostService {
 		/* Authenticate. */
 		try {
 			var result = dittoService.getDitto().getStore().execute(
-				"SELECT * FROM %s WHERE _id = :post_id".formatted(TASKS_COLLECTION_NAME),
+				"SELECT * FROM %s WHERE _id = :post_id".formatted(POSTS_COLLECTION_NAME),
 				DittoCborSerializable.Dictionary.buildDictionary()
 					.put("post_id", post_id)
 					.build()
@@ -278,18 +278,18 @@ public class DittoPostService {
 			throw new RuntimeException(e);
 		}
 
-		this._deleteTask(post_id);
+		this._deletePost(post_id);
 	}
 
 	@Nonnull
 	public Flux<List<Post>> observeAll() {
-		String tasksQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(TASKS_COLLECTION_NAME);
+		String postsQuery = "SELECT * FROM %s ORDER BY time DESC".formatted(POSTS_COLLECTION_NAME);
 		String usersQuery = "SELECT * FROM %s".formatted(USERS_COLLECTION_NAME);
 
 		return Flux.combineLatest(
-			observeQuery(tasksQuery, "SELECT * FROM %s".formatted(TASKS_COLLECTION_NAME)),
+			observeQuery(postsQuery, "SELECT * FROM %s".formatted(POSTS_COLLECTION_NAME)),
 			observeQuery(usersQuery, usersQuery),
-			(tasks, users) -> {
+			(posts, users) -> {
 				var userMap = users.stream()
 					.map(DittoQueryResultItem::getValue)
 					.collect(java.util.stream.Collectors.toMap(
@@ -298,7 +298,7 @@ public class DittoPostService {
 						(u1, u2) -> u1
 					));
 
-				return tasks.stream().map(item -> {
+				return posts.stream().map(item -> {
 					var value = item.getValue();
 					String authorId = value.get("author_id").getString();
 					String username = userMap.getOrDefault(authorId, "Unknown");
@@ -337,7 +337,7 @@ public class DittoPostService {
 		}, FluxSink.OverflowStrategy.LATEST);
 	}
 
-	public List<Post> getTasksFiltered(String filter) {
+	public List<Post> getPostsFiltered(String filter) {
 
 		String orderBy;
 		switch (filter) {
@@ -356,17 +356,17 @@ public class DittoPostService {
 				break;
 		}
 
-		String tasksQuery =
+		String postsQuery =
 			"SELECT * FROM %s ORDER BY %s"
-				.formatted(TASKS_COLLECTION_NAME, orderBy);
+				.formatted(POSTS_COLLECTION_NAME, orderBy);
 
 		String usersQuery =
 			"SELECT * FROM %s".formatted(USERS_COLLECTION_NAME);
 
 		try {
-			var taskResults = dittoService.getDitto()
+			var postResults = dittoService.getDitto()
 				.getStore()
-				.execute(tasksQuery)
+				.execute(postsQuery)
 				.toCompletableFuture()
 				.join()
 				.getItems();
@@ -386,7 +386,7 @@ public class DittoPostService {
 					(u1, u2) -> u1
 				));
 
-			return taskResults.stream().map(item -> {
+			return postResults.stream().map(item -> {
 				var value = item.getValue();
 				String authorId = value.get("author_id").getString();
 				String username = userMap.getOrDefault(authorId, "Unknown");
