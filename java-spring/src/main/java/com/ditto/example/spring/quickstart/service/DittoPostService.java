@@ -345,10 +345,10 @@ public class DittoPostService {
 				orderBy = "time ASC";
 				break;
 			case "likes_desc":
-				orderBy = "likes - dislikes DESC";
+				orderBy = "LENGTH(likes) - LENGTH(dislikes) DESC";
 				break;
 			case "likes_asc":
-				orderBy = "likes - dislikes ASC";
+				orderBy = "LENGTH(likes) - LENGTH(dislikes) ASC";
 				break;
 			case "time_desc":
 			default:
