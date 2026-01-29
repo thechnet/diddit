@@ -15,14 +15,39 @@
     <!-- Attachments -->
     <div th:if="${item.attachment != null and item.attachment != ''}">
 
-      <div th:if="${#strings.contains(item.attachment, 'data:image')}">
-        <img style="max-width: 50%; height: auto; border-radius: 8px; display: block;"
-             th:src="${item.attachment}"/>
-      </div>
+      <div th:id="'attachment_' + ${item._id}" 
+             th:data-raw="${item.attachment}" 
+             class="attachment-area">
+        </div>
 
-      <div th:unless="${#strings.contains(item.attachment, 'data:image')}">
-        <a download="attachment" th:href="${item.attachment}">Download File</a>
-      </div>
+        <script th:inline="javascript">
+            (function() {
+                var id = 'attachment_' + [[${item._id}]];
+                var element = document.getElementById(id);
+                if (!element) return;
+
+                var raw = element.getAttribute("data-raw");
+                if (!raw) return;
+
+                var parts = raw.split(":::");
+                var fileName = "download";
+                var fileContent = raw;
+
+                if (parts.length > 1) {
+                    fileName = parts[0];
+                    fileContent = parts[1];
+                }
+
+                if (fileContent.includes("data:image")) {
+                    element.innerHTML = `<img src="${fileContent}" style="max-width: 50%; height: auto; border-radius: 8px; display: block;" />`;
+                } else {
+                    element.innerHTML = `
+                        <a href="${fileContent}" download="${fileName}" onclick="event.stopPropagation()">
+                          ${fileName}
+                        </a>`;
+                }
+            })();
+        </script>
     </div>
   </div>
 

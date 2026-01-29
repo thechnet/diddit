@@ -65,7 +65,9 @@ public class TaskRestController {
 				byte[] bytes = file.getBytes();
 				String base64 = Base64.getEncoder().encodeToString(bytes);
 				// Create the standard Data URI string
-				attachmentBase64 = "data:" + file.getContentType() + ";base64," + base64;
+                String originalName = file.getOriginalFilename();
+                if (originalName == null || originalName.isEmpty()) originalName = "file";
+				attachmentBase64 = originalName + ":::" + "data:" + file.getContentType() + ";base64," + base64;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
