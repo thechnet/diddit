@@ -1,7 +1,7 @@
-package com.ditto.example.spring.quickstart.controller;
+package ditto.diddit.controller;
 
-import com.ditto.example.spring.quickstart.Post;
-import com.ditto.example.spring.quickstart.service.DidditService;
+import ditto.diddit.Post;
+import ditto.diddit.service.DidditService;
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Base64;

@@ -1,7 +1,7 @@
-package com.ditto.example.spring.quickstart.service;
+package ditto.diddit.service;
 
-import com.ditto.example.spring.quickstart.Hash;
-import com.ditto.example.spring.quickstart.Post;
+import ditto.diddit.Hash;
+import ditto.diddit.Post;
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResultItem;

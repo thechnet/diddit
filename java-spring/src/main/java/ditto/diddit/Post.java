@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart;
+package ditto.diddit;
 
 public record Post(
 	String _id,

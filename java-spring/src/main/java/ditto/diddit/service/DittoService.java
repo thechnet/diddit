@@ -1,7 +1,7 @@
-package com.ditto.example.spring.quickstart.service;
+package ditto.diddit.service;
 
-import com.ditto.example.spring.quickstart.configuration.DittoConfigurationKeys;
-import com.ditto.example.spring.quickstart.configuration.DittoSecretsConfiguration;
+import ditto.diddit.configuration.DittoConfigurationKeys;
+import ditto.diddit.configuration.DittoSecretsConfiguration;
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoAsyncCancellable;
 import com.ditto.java.DittoConfig;

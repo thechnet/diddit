@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.configuration;
+package ditto.diddit.configuration;
 
 public class DittoConfigurationKeys {
 

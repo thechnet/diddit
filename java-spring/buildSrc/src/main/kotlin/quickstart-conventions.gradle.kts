@@ -32,7 +32,7 @@ sourceSets.main {
 val generateSecretProperties by tasks.registering {
     val envFile = rootDir.resolve("../.env")
     val outputFile = generatedSources.map {
-        it.file("com/ditto/example/spring/quickstart/configuration/DittoSecretsConfiguration.java")
+        it.file("ditto/diddit/configuration/DittoSecretsConfiguration.java")
     }
     inputs.files(envFile.takeIf { it.exists() }).optional()
     outputs.file(outputFile)
@@ -50,7 +50,7 @@ val generateSecretProperties by tasks.registering {
         }
 
         val javaSource = """
-            |package com.ditto.example.spring.quickstart.configuration;
+            |package ditto.diddit.configuration;
             |
             |public class DittoSecretsConfiguration {
             |${properties.map { "    public static final String ${it.key} = \"${it.value.toString().removeSurrounding("\"")}\";" }.joinToString("\n")}

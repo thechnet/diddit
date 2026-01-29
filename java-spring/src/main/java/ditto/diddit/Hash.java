@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart;
+package ditto.diddit;
 
 import java.util.Base64;
 import javax.crypto.SecretKeyFactory;

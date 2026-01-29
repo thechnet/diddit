@@ -4,11 +4,10 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("pmd")
     id("com.github.spotbugs") version "6.0.7"
-
     id("quickstart-conventions")
 }
 
-group = "com.ditto.example.spring"
+group = "ditto"
 version = "0.0.1-SNAPSHOT"
 
 java {

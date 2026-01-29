@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.controller;
+package ditto.diddit.controller;
 
 import java.util.Map;
 import org.slf4j.Logger;

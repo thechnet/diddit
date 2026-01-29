@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart;
+package ditto.diddit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
