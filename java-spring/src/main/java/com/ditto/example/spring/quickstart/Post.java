@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.service;
+package com.ditto.example.spring.quickstart;
 
 public record Post(
 	String _id,

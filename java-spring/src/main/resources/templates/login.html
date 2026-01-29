@@ -2,39 +2,42 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Ditto Spring Posts Quickstart</title>
-  <link href="https://unpkg.com/reset-css@5.0.2/reset.css" rel="stylesheet" type="text/css" />
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="https://unpkg.com/reset-css@5.0.2/reset.css" rel="stylesheet" type="text/css"/>
+  <link href="style.css" rel="stylesheet" type="text/css"/>
   <!-- <link rel="icon" type="image/jpg" href="index.jpg"/> -->
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
 </head>
 
 <body>
-  <main>
-    <div id="header">
-      <div id="title">Diddit</div>
-    </div>
-    <div id="form-section">
-      <h3>Login</h3>
-      <form id="login-form">
-        <input id="username" placeholder="Username" required type="text" />
-        <input id="password" placeholder="Password" required type="password" />
-        <button class="primary" type="submit">Login</button>
-        <button onclick="window.location.href='/register'" type="button">Register</button>
-      </form>
-    </div>
-  </main>
-  <script>
-    document.getElementById('login-form').addEventListener('submit', function (event) {
-      event.preventDefault();
-      localStorage.setItem('username', document.getElementById('username').value);
-      localStorage.setItem('password', document.getElementById('password').value);
-      window.location.href = '/posts';
-    });
-  </script>
+<main>
+  <div id="header">
+    <img src="logo.png">
+  </div>
+  <div id="form-section">
+    <h3>Sign in to Diddit</h3>
+    <form id="login-form">
+      <input id="username" placeholder="Username" required type="text"/>
+      <input id="password" placeholder="Password" required type="password"/>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+  </div>
+  <div id="new-to-diddit">
+    <span>New to Diddit?</span>
+    <a href="/register">Create an account</a>
+  </div>
+</main>
+<script>
+  document.getElementById('login-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    localStorage.setItem('username', document.getElementById('username').value);
+    localStorage.setItem('password', document.getElementById('password').value);
+    window.location.href = '/posts';
+  });
+</script>
 </body>
 
 </html>

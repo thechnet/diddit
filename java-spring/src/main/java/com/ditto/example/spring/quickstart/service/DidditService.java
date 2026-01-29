@@ -1,6 +1,7 @@
 package com.ditto.example.spring.quickstart.service;
 
 import com.ditto.example.spring.quickstart.Hash;
+import com.ditto.example.spring.quickstart.Post;
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResultItem;
@@ -23,15 +24,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 @Component
-public class DittoPostService {
+public class DidditService {
 
 	public static final String POSTS_COLLECTION_NAME = "posts";
 	private static final String USERS_COLLECTION_NAME = "users";
 
 	private final DittoService dittoService;
-	private final Logger logger = LoggerFactory.getLogger(DittoPostService.class);
+	private final Logger logger = LoggerFactory.getLogger(DidditService.class);
 
-	public DittoPostService(DittoService dittoService) {
+	public DidditService(DittoService dittoService) {
 		this.dittoService = dittoService;
 	}
 

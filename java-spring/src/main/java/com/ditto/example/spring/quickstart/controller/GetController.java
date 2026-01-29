@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class SiteController {
+public class GetController {
 
-	private final Logger logger = LoggerFactory.getLogger(SiteController.class);
+	private final Logger logger = LoggerFactory.getLogger(GetController.class);
 
-	public SiteController() {
+	public GetController() {
 	}
 
 	@GetMapping("/")
@@ -26,9 +26,9 @@ public class SiteController {
 	}
 
 	@GetMapping("/posts")
-	public String drilldown(@RequestParam(name = "parent", required = false) String parent,
+	public String posts(@RequestParam(name = "parent", required = false) String parent,
 		Map<String, Object> model) {
 		model.put("parent", parent != null ? parent : "");
-		return "drilldown";
+		return "posts";
 	}
 }

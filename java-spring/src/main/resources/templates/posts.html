@@ -29,7 +29,7 @@
   <div id="form-section">
     <form hx-encoding="multipart/form-data"
           hx-on::after-request="if(event.detail.successful) this.reset()"
-          hx-post="/posts" hx-swap="none" onsubmit="addCredentials(this)">
+          hx-post="/posts/new" hx-swap="none" onsubmit="addCredentials(this)">
       <input name="username" type="hidden"/>
       <input name="password" type="hidden"/>
       <input name="parent" th:attr="value=${parent}" type="hidden"/>

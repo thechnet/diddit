@@ -44,9 +44,8 @@ main {
     color: var(--color-text);
 }
 
-#header #title {
-    font-weight: bold;
-    font-size: 2rem;
+#header img {
+  width: 150px;
 }
 
 #sync-header {
