@@ -44,6 +44,16 @@ main {
     color: var(--color-text);
 }
 
+img.logo {
+  content: url("logo-black.png");
+}
+
+@media (prefers-color-scheme: dark) {
+  img.logo {
+    content: url("logo-white.png");
+  }
+}
+
 #header img {
   width: 150px;
 }
