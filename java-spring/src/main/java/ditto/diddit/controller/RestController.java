@@ -130,8 +130,7 @@ public class RestController {
 	public String deletePost(@RequestParam("username") @Nonnull String username,
 		@RequestParam("password") @Nonnull String password,
 		@RequestParam("post_id") @Nonnull String post_id) {
-		didditService.deletePost(username, password, post_id);
-		return "";
+		return didditService.deletePost(username, password, post_id);
 	}
 
 	@GetMapping("/posts/filter")

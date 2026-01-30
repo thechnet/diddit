@@ -260,18 +260,18 @@ public class DidditService implements DisposableBean {
 		}
 	}
 
-	public void deletePost(@Nonnull String username, @Nonnull String password,
+	public String deletePost(@Nonnull String username, @Nonnull String password,
 		@Nonnull String post_id) {
 		var userOrEmpty = getUserByUsername(username);
 		if (userOrEmpty.isEmpty()) {
 			logger.error("User not found: '{}'", username);
-			return;
+			return "false";
 		}
 
 		var user = userOrEmpty.get();
 		if (!authenticate(user, password)) {
 			logger.error("Invalid password for user: {}", username);
-			return;
+			return "false";
 		}
 
 		/* Authenticate. */
@@ -287,20 +287,21 @@ public class DidditService implements DisposableBean {
 				.map(item -> item.getValue().get("author_id").getString())
 				.toList();
 			if (author_ids.size() != 1) {
-				return;
+				return "false";
 			}
 
 			var author_id = author_ids.get(0);
 
 			if (!user.get("_id").getString().equals(author_id)) {
 				logger.error("Cannot delete other user's post");
-				return;
+				return "false";
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 		this._deletePost(post_id);
+		return "true";
 	}
 
 	@Nonnull

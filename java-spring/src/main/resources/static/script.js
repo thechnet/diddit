@@ -8,10 +8,16 @@ function interact(target, endpoint) {
   const username = localStorage.getItem("username");
   const password = localStorage.getItem("password");
   fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `post_id=${encodeURIComponent(post_id)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-  });
+       method: 'POST',
+       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+       body: `post_id=${encodeURIComponent(post_id)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+     })
+     .then(res => res.text())
+     .then(text => {
+       if (text.trim() === "false") {
+         alert("Cannot delete other user's post.");
+       }
+     });
 }
 
 function likePost(event) {
