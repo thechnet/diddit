@@ -1,4 +1,8 @@
 <th:block th:fragment="postListFrag(posts)">
+  <a hx-swap-oob="true" th:if="${parent != null}" id="grandparent" class="button"
+    th:href="'/posts?parent=' + ${parent.parent != null ? parent.parent : ''}">
+    Up
+  </a>
   <div hx-swap-oob="true" id="parent_post" th:if="${parent != null}">
     <div th:replace="~{fragments/postContainer :: postContainer(${parent})}"></div>
   </div>

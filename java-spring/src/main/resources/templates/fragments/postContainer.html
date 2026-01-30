@@ -53,21 +53,21 @@
 
   <div class="reactions">
     <!-- Like button -->
-    <button onclick="likePost(event)"
+    <button class="button" onclick="likePost(event)"
             th:data-likes="${item.likes}" th:data-post_id="${item._id}">Like
     </button>
     <span
         th:text="${(item.likes == null || item.likes.trim().length() == 0) ? 0 : item.likes.trim().split(' +').length}"></span>
 
     <!-- Dislike button -->
-    <button onclick="dislikePost(event)"
+    <button class="button" onclick="dislikePost(event)"
             th:data-dislikes="${item.dislikes}" th:data-post_id="${item._id}">Dislike
     </button>
     <span
         th:text="${(item.dislikes == null || item.dislikes.trim().length() == 0) ? 0 : item.dislikes.trim().split(' +').length}"></span>
 
     <!-- Delete button -->
-    <button onclick="deletePost(event)"
+    <button class="button" onclick="deletePost(event)"
             th:data-post_id="${item._id}">Delete
     </button>
   </div>

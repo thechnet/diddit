@@ -88,6 +88,14 @@ img.logo {
     font-style: italic;
 }
 
+#grandparent[href=''] {
+    display: none;
+}
+
+#grandparent::before {
+    content: '↑';
+}
+
 #parent_post:empty {
   display: none
 }
@@ -192,7 +200,7 @@ ul .post-container:hover {
     white-space: pre-wrap;
 }
 
-button {
+.button {
     all: unset;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
     border-radius: 5px;
@@ -202,6 +210,6 @@ button {
     align-self: flex-start; /* Prevent button from growing to full width of column-directed flex container. */
 }
 
-button.primary {
+.button.primary {
     background-color: var(--color-button-primary);
 }

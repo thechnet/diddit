@@ -23,17 +23,19 @@
       <span hx-ext="sse" id="sync_state" sse-connect="/ditto/sync/state" sse-swap="sync_state">
         Sync State: True
       </span>
-      <button hx-post="/ditto/sync/toggle" hx-swap="none" type="button">
+      <button class="button" hx-post="/ditto/sync/toggle" hx-swap="none" type="button">
         Toggle
       </button>
     </div>
 
     <div id="account">
       <span id="username"></span>
-      <button onclick="logout();">Sign out</button>
+      <button class="button" onclick="logout();">Sign out</button>
     </div>
 
-    <div id="parent_post"></div>
+    <a id="grandparent" href=""></a>
+
+    <div class="button" id="parent_post"></div>
 
     <div id="post-form">
       <form hx-encoding="multipart/form-data" hx-on::after-request="if(event.detail.successful) this.reset()"
@@ -43,7 +45,7 @@
         <input name="parent" th:attr="value=${parent}" type="hidden" />
         <textarea name="title" placeholder="Message" required></textarea>
         <div style="margin-top: 10px;"><input name="file" type="file" /></div>
-        <button class="primary" style="margin-top: 10px;" type="submit">
+        <button class="button primary" style="margin-top: 10px;" type="submit">
           <span th:text="${parent != null and parent != ''} ? 'Add reply' : 'Add post'"></span>
         </button>
       </form>
