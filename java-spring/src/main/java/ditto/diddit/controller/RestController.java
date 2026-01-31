@@ -134,20 +134,14 @@ public class RestController {
 	}
 
 	@GetMapping("/posts/filter")
-	public String filterPosts(@RequestParam(required = false) String filter,
-		Model model) {
+	public String filterPosts(@RequestParam(required = false) String filter, @RequestParam(name = "parent_id", required = false) String parent_id) {
 
 		if (filter == null || filter.isEmpty()) {
 			return ""; // Leer wenn SSE aktiv ist
 		}
 		List<Post> posts = didditService.getPostsFiltered(filter);
 
-		Context context = new Context();
-		context.setVariable("posts", posts);
-		logger.info("Found {} posts", posts.size());
-		context.setVariable("parent", "");
-		// Manually render and return the HTML
-		return templateEngine.process("fragments/postList", Set.of("postListContent"), context);
+		return renderPostList(posts, parent_id);
 	}
 
 	@PostMapping("/authenticate")

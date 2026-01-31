@@ -55,7 +55,7 @@
     </div>
 
     <div id="filter-button">
-      <select hx-get="/posts/filter" hx-swap="innerHTML" hx-target="#post_list" hx-trigger="change" id="filter"
+      <select th:attr="hx-get=@{/posts/filter(parent_id=${parent})}" hx-swap="innerHTML" hx-target="#post_list" hx-trigger="change" id="filter"
         name="filter"
         onchange="if(this.value === '') document.getElementById('sse-container').style.display='block'; else document.getElementById('sse-container').style.display='none';">
         <option value="time_desc">Newest first</option>
