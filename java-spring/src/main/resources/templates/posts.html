@@ -44,7 +44,10 @@
         <input name="password" type="hidden" />
         <input name="parent" th:attr="value=${parent}" type="hidden" />
         <textarea name="title" placeholder="Message" required></textarea>
-        <div style="margin-top: 10px;"><input name="file" type="file" /></div>
+        <div style="margin-top: 10px;">
+             <input name="file" type="file" 
+             onchange="if(this.files[0].size > 5242880) { alert('File is too large! Max 5MB'); this.value=''; }" />
+        </div>
         <button class="button primary" style="margin-top: 10px;" type="submit">
           <span th:text="${parent != null and parent != ''} ? 'Add reply' : 'Add post'"></span>
         </button>
